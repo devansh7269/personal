@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mind Reading Emoji 🔮</title>
+<style>
+  body {
+    font-family: system-ui, Arial;
+    background: linear-gradient(135deg, #ffe4e1, #ffb6c1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    padding: 20px;
+    color: #4b0082;
+  }
+  .card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    max-width: 500px;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background: #ff69b4;
+    color: white;
+    cursor: pointer;
+    margin-top: 15px;
+  }
+  button:hover {
+    background: #ff1493;
+  }
+  h2 {
+    font-size: 28px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Mind Reading Emoji 🔮</h1>
+    <p>
+      1. Think of any two-digit number.<br>
+      2. Add both digits together.<br>
+      3. Subtract that sum from your original number.<br>
+      4. Find your number below and remember the emoji next to it.<br>
+      5. When ready, click "Reveal" — I will read your mind.
+    </p>
+    <div id="list"></div>
+    <button onclick="reveal()">Reveal</button>
+    <h2 id="result"></h2>
+  </div>
+
+<script>
+const emojis = ["🍎","🍌","🍇","🍉","🍓","🍒","🍍","🥭","🍑","🍋","🥝","🍈","🌽","🥕","🥔","🍆","🥒","🫑","🌶️","🥦","🧄","🧅","🍄","🥜","🥨","🍪","🍫","🍰","🧁","🍩","🍿"];
+let magicEmoji = "🍩"; // The emoji they will always land on
+
+function generateList() {
+  let html = "<table style='margin:auto'>";
+  for (let i = 0; i < 100; i++) {
+    let emoji = (i % 9 === 0) ? magicEmoji : emojis[Math.floor(Math.random()*emojis.length)];
+    html += `<tr><td>${i}</td><td>${emoji}</td></tr>`;
+  }
+  html += "</table>";
+  document.getElementById("list").innerHTML = html;
+}
+
+function reveal() {
+  document.getElementById("result").textContent = `You were thinking of... ${magicEmoji}`;
+}
+
+generateList();
+</script>
+</body>
+</html>
