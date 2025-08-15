@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Magic Trick ✨</title>
+  <style>
+    body {
+      font-family: system-ui, Arial;
+      background: radial-gradient(circle at top, #ffe4e1, #ffb6c1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+      color: #4b0082;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      max-width: 400px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #ff69b4;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ff1493;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Magic Trick ✨</h1>
+    <p>Think of any number between 1 and 10 in your mind.<br>
+       Multiply it by 9.<br>
+       Add the two digits together (e.g., 18 → 1 + 8 = 9).<br>
+       Now multiply that by 3.</p>
+    <button onclick="doMagic()">Show Magic Number</button>
+    <h2 id="result" style="margin-top: 20px;"></h2>
+  </div>
+
+  <script>
+    function doMagic() {
+      // This always works because of math patterns!
+      document.getElementById('result').textContent = "Your number is... 27! 🎩✨";
+    }
+  </script>
+</body>
+</html>
