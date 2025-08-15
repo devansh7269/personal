@@ -13,73 +13,10 @@ html, body {
   font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
   color: var(--text);
   background: var(--pink-bg);
+  overflow-x: hidden;
 }
 
-.centered {
-  min-height: 100%;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 24px;
-}
-
-.card {
-  background: var(--white);
-  padding: 28px 24px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px var(--shadow);
-  max-width: 720px;
-  width: 96%;
-  border: 3px solid var(--pink-accent);
-}
-
-h1, h2, h3 {
-  margin: 0 0 12px 0;
-  line-height: 1.15;
-}
-
-p { margin: 0 0 16px 0; }
-
-.btn {
-  display: inline-block;
-  padding: 14px 22px;
-  border-radius: 999px;
-  background: var(--pink-accent);
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-  box-shadow: 0 8px 18px var(--shadow);
-  letter-spacing: 0.2px;
-  font-size: 16px;
-}
-.btn:hover { transform: translateY(-2px); filter: brightness(1.02); }
-.btn:active { transform: translateY(0px) scale(0.98); }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 14px;
-}
-@media (min-width: 540px) {
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-.option {
-  padding: 14px 16px;
-  border-radius: 16px;
-  border: 2px solid var(--pink-accent);
-  background: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease;
-  box-shadow: 0 6px 14px var(--shadow);
-}
-.option:hover { transform: translateY(-2px); background: #fff5fa; }
-
-/* Surprise page background animation */
+/* Background floating elements */
 .background {
   position: fixed;
   inset: 0;
@@ -130,6 +67,96 @@ p { margin: 0 0 16px 0; }
 @keyframes floatUp {
   0%   { transform: translateY(0)    rotate(0deg); }
   100% { transform: translateY(-110vh) rotate(2deg); }
+}
+
+/* Centering layout */
+.centered {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.card {
+  background: var(--white);
+  padding: 28px 24px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px var(--shadow);
+  max-width: 720px;
+  width: 96%;
+  border: 3px solid var(--pink-accent);
+  animation: fadeInUp 1s ease forwards;
+}
+
+h1, h2, h3 {
+  margin: 0 0 12px 0;
+  line-height: 1.15;
+  animation: fadeInDown 1s ease forwards;
+}
+
+p { 
+  margin: 0 0 16px 0;
+  animation: fadeIn 1.2s ease forwards;
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 22px;
+  border-radius: 999px;
+  background: var(--pink-accent);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  box-shadow: 0 8px 18px var(--shadow);
+  letter-spacing: 0.2px;
+  font-size: 16px;
+  animation: popUp 1s ease forwards;
+}
+.btn:hover { transform: translateY(-2px); filter: brightness(1.02); }
+.btn:active { transform: translateY(0px) scale(0.98); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+  animation: fadeInUp 1.2s ease forwards;
+}
+@media (min-width: 540px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.option {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 2px solid var(--pink-accent);
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease;
+  box-shadow: 0 6px 14px var(--shadow);
+}
+.option:hover { transform: translateY(-2px); background: #fff5fa; }
+
+/* Keyframe animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes popUp {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .content {
