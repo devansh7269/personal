@@ -168,3 +168,16 @@ p {
   font-size: 18px;
   opacity: 0.75;
 }
+/* Typing effect */
+.typing {
+  font-size: clamp(20px, 5vw, 36px);
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 3px solid var(--pink-accent); /* blinking cursor */
+  animation: blink 0.7s step-end infinite;
+}
+
+@keyframes blink {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--pink-accent); }
+}
