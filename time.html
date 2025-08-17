@@ -10,7 +10,6 @@
     .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
     .time-btn { padding: 10px; border: none; border-radius: 6px; background: #007bff; color: #fff; cursor: pointer; font-size: 14px; }
     .time-btn:hover { background: #0056b3; }
-    input { padding: 8px; margin: 6px 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
   </style>
   <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -23,13 +22,7 @@
 <body>
   <main>
     <section class="card">
-      <h2>Book Your Time ⏰</h2>
-
-      <!-- User details -->
-      <input type="text" id="name" placeholder="Your Name" required />
-      <input type="email" id="email" placeholder="Your Email" required />
-
-      <h3>Select a time slot:</h3>
+      <h2>Select your time ⏰</h2>
       <div class="grid" id="timeGrid"></div>
     </section>
   </main>
@@ -49,22 +42,12 @@
       grid.appendChild(btn);
 
       btn.addEventListener("click", () => {
-        const userName = document.getElementById("name").value;
-        const userEmail = document.getElementById("email").value;
-
-        if(!userName || !userEmail){
-          alert("⚠️ Please enter your name and email first.");
-          return;
-        }
-
         if(confirm(`Do you want to confirm ${btn.textContent}?`)){
           emailjs.send("service_w521878m","template_uk2gvi",{
-            name: userName,
-            email: userEmail,
             time: btn.textContent
           })
           .then(() => {
-            alert(`✅ ${btn.textContent} has been sent to Devansh's email!`);
+            alert(`✅ ${btn.textContent} has been sent to your Gmail!`);
           }, (err) => {
             alert("❌ Failed to send. Check console.");
             console.error(err);
