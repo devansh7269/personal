@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Select Time ⏰</title>
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- EmailJS library -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("YOUR_PUBLIC_KEY"); // 🔑 replace with your public key
+    })();
+  </script>
 </head>
 <body>
   <main class="centered">
@@ -17,40 +25,35 @@
   <script>
     const grid = document.getElementById("time-grid");
 
-    // Function to format time properly (HH:MM)
+    // Format HH:MM
     function formatTime(hour, minute) {
       let h = hour.toString().padStart(2, "0");
       let m = minute.toString().padStart(2, "0");
       return `${h}:${m}`;
     }
 
-    // Generate slots from 08:00 → 00:00 (midnight)
+    // Generate slots from 08:00 → 00:00
     let hour = 8, minute = 0;
     while (!(hour === 0 && minute === 30)) {
       const timeStr = formatTime(hour, minute);
 
-      // Create button
       const btn = document.createElement("button");
       btn.className = "option time-btn";
       btn.textContent = timeStr;
       grid.appendChild(btn);
 
-      // Click event with confirmation + email trigger placeholder
+      // Click event → confirmation → EmailJS send
       btn.addEventListener("click", () => {
         if (confirm(`Do you want to confirm ${timeStr}?`)) {
-          fetch("https://your-server.com/send-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ time: timeStr })
+          emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+              time: timeStr,
+              to_email: "devanshjain535@gmail.com"
           })
-          .then(res => {
-            if (res.ok) {
-              alert(`✅ ${timeStr} has been selected and mailed!`);
-            } else {
-              alert("❌ Error sending mail.");
-            }
-          })
-          .catch(() => alert("⚠️ Server not responding."));
+          .then(() => {
+            alert(`✅ ${timeStr} has been selected and mailed!`);
+          }, (err) => {
+            alert("❌ Failed to send mail: " + JSON.stringify(err));
+          });
         }
       });
 
@@ -70,21 +73,18 @@
     grid.appendChild(midnightBtn);
     midnightBtn.addEventListener("click", () => {
       if (confirm(`Do you want to confirm 00:00?`)) {
-        fetch("https://your-server.com/send-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ time: "00:00" })
+        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+            time: "00:00",
+            to_email: "devanshjain535@gmail.com"
         })
-        .then(res => {
-          if (res.ok) {
-            alert(`✅ 00:00 has been selected and mailed!`);
-          } else {
-            alert("❌ Error sending mail.`);
-          }
-        })
-        .catch(() => alert("⚠️ Server not responding."));
+        .then(() => {
+          alert(`✅ 00:00 has been selected and mailed!`);
+        }, (err) => {
+          alert("❌ Failed to send mail: " + JSON.stringify(err));
+        });
       }
     });
   </script>
 </body>
 </html>
+>
