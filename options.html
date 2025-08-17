@@ -29,21 +29,39 @@
     const bg = document.getElementById('bg');
     function rand(min, max) { return Math.random() * (max - min) + min; }
     function createFloating(kind) {
-      const el = document.createElement('div');
-      el.classList.add('floating', kind);
-      el.style.left = rand(-5, 100) + 'vw';
-      const duration = rand(8, 18);
-      el.style.animationDuration = duration + 's';
-      el.style.animationDelay = rand(0, 8) + 's';
-      el.style.opacity = rand(0.7, 1).toFixed(2);
-      const size = kind === 'heart' ? rand(14, 28) : rand(20, 42);
-      el.style.width = size + 'px';
-      el.style.height = (kind === 'heart' ? size : size * 1.3) + 'px';
-      bg.appendChild(el);
-      el.addEventListener('animationend', () => { el.remove(); createFloating(kind); });
-    }
-    for (let i = 0; i < 20; i++) createFloating('balloon');
-    for (let i = 0; i < 24; i++) createFloating('heart');
-  </script>
-</body>
-</html>
+  const el = document.createElement("div");
+  el.classList.add("floating", kind);
+
+  // Random position
+  el.style.left = rand(-5, 100) + "vw";
+
+  // Random speed (slower & faster mix)
+  const duration = rand(10, 25); 
+  el.style.animationDuration = duration + "s";
+  el.style.animationDelay = rand(0, 8) + "s";
+
+  // Opacity variety
+  el.style.opacity = rand(0.6, 1).toFixed(2);
+
+  // Size variety
+  const size = kind === "heart" ? rand(16, 32) : rand(24, 50);
+  el.style.width = size + "px";
+  el.style.height = (kind === "heart" ? size : size * 1.3) + "px";
+
+  // Random color shades
+  if (kind === "heart") {
+    const colors = ["#ff4d6d", "#ff6f91", "#ff85a2", "#ff99ac"];
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+  } else if (kind === "balloon") {
+    const shades = ["#ff5d95", "#ff88b0", "#ffb3c6", "#ff6fa0"];
+    el.style.background = shades[Math.floor(Math.random() * shades.length)];
+  }
+
+  bg.appendChild(el);
+
+  // Respawn when animation ends
+  el.addEventListener("animationend", () => {
+    el.remove();
+    createFloating(kind);
+  });
+}
