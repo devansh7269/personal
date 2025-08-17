@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Select Time ⏰</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="centered">
+    <section class="card content">
+      <h2>Select your time ⏰</h2>
+      <div id="time-grid" class="grid"></div>
+    </section>
+  </main>
+
+  <script>
+    const grid = document.getElementById("time-grid");
+
+    // Function to format time properly (HH:MM)
+    function formatTime(hour, minute) {
+      let h = hour.toString().padStart(2, "0");
+      let m = minute.toString().padStart(2, "0");
+      return `${h}:${m}`;
+    }
+
+    // Generate slots from 08:00 → 00:00 (midnight)
+    let hour = 8, minute = 0;
+    while (!(hour === 0 && minute === 30)) {
+      const timeStr = formatTime(hour, minute);
+
+      // Create button
+      const btn = document.createElement("button");
+      btn.className = "option time-btn";
+      btn.textContent = timeStr;
+      grid.appendChild(btn);
+
+      // Click event with confirmation + email trigger placeholder
+      btn.addEventListener("click", () => {
+        if (confirm(`Do you want to confirm ${timeStr}?`)) {
+          fetch("https://your-server.com/send-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ time: timeStr })
+          })
+          .then(res => {
+            if (res.ok) {
+              alert(`✅ ${timeStr} has been selected and mailed!`);
+            } else {
+              alert("❌ Error sending mail.");
+            }
+          })
+          .catch(() => alert("⚠️ Server not responding."));
+        }
+      });
+
+      // Increment 30 minutes
+      minute += 30;
+      if (minute === 60) {
+        minute = 0;
+        hour++;
+      }
+      if (hour === 24 && minute === 0) break; // stop at 00:00
+    }
+
+    // Add 00:00 manually at the end
+    const midnightBtn = document.createElement("button");
+    midnightBtn.className = "option time-btn";
+    midnightBtn.textContent = "00:00";
+    grid.appendChild(midnightBtn);
+    midnightBtn.addEventListener("click", () => {
+      if (confirm(`Do you want to confirm 00:00?`)) {
+        fetch("https://your-server.com/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ time: "00:00" })
+        })
+        .then(res => {
+          if (res.ok) {
+            alert(`✅ 00:00 has been selected and mailed!`);
+          } else {
+            alert("❌ Error sending mail.`);
+          }
+        })
+        .catch(() => alert("⚠️ Server not responding."));
+      }
+    });
+  </script>
+</body>
+</html>
