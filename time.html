@@ -4,87 +4,83 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Select Time ⏰</title>
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- EmailJS library -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     (function(){
-      emailjs.init("YOUR_PUBLIC_KEY"); // 🔑 replace with your public key
+      emailjs.init("wW8gn7lzT7qSAWFEG"); // ✅ Your Public Key
     })();
   </script>
+  <style>
+    body { font-family: system-ui, Arial; max-width: 700px; margin: 24px auto; padding: 0 12px; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .time-btn { padding: 10px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; }
+    .time-btn:hover { background: #f0f0f0; }
+    .card { padding: 20px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .centered { display: flex; justify-content: center; align-items: center; height: 100vh; }
+    input { width: 100%; padding: 8px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
+    button { font-size: 14px; }
+  </style>
 </head>
 <body>
   <main class="centered">
     <section class="card content">
       <h2>Select your time ⏰</h2>
-      <div id="time-grid" class="grid"></div>
+
+      <!-- Name + Email input -->
+      <form id="userForm">
+        <input type="text" id="userName" placeholder="Your Name" required />
+        <input type="email" id="userEmail" placeholder="Your Email" required />
+      </form>
+
+      <!-- Time selection grid -->
+      <div class="grid" id="timeSlots"></div>
     </section>
   </main>
 
   <script>
-    const grid = document.getElementById("time-grid");
+    const grid = document.getElementById("timeSlots");
 
-    // Format HH:MM
-    function formatTime(hour, minute) {
-      let h = hour.toString().padStart(2, "0");
-      let m = minute.toString().padStart(2, "0");
-      return `${h}:${m}`;
-    }
+    // Generate time slots from 8:00 AM to 12:00 Midnight
+    let start = 8 * 60;   // 8:00 AM in minutes
+    let end = 24 * 60;    // 12:00 midnight in minutes
 
-    // Generate slots from 08:00 → 00:00
-    let hour = 8, minute = 0;
-    while (!(hour === 0 && minute === 30)) {
-      const timeStr = formatTime(hour, minute);
+    for (let mins = start; mins <= end; mins += 30) {
+      let hours = Math.floor(mins / 60);
+      let minutes = mins % 60;
+      let suffix = hours >= 12 ? "PM" : "AM";
+      let displayHours = ((hours + 11) % 12 + 1); 
+      let timeStr = `${displayHours}:${minutes.toString().padStart(2,"0")} ${suffix}`;
 
-      const btn = document.createElement("button");
-      btn.className = "option time-btn";
+      let btn = document.createElement("button");
+      btn.className = "time-btn";
+      btn.type = "button";
       btn.textContent = timeStr;
-      grid.appendChild(btn);
 
-      // Click event → confirmation → EmailJS send
       btn.addEventListener("click", () => {
+        let name = document.getElementById("userName").value.trim();
+        let email = document.getElementById("userEmail").value.trim();
+
+        if (!name || !email) {
+          alert("⚠️ Please enter your name and email first.");
+          return;
+        }
+
         if (confirm(`Do you want to confirm ${timeStr}?`)) {
-          emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-              time: timeStr,
-              to_email: "devanshjain535@gmail.com"
-          })
-          .then(() => {
-            alert(`✅ ${timeStr} has been selected and mailed!`);
-          }, (err) => {
-            alert("❌ Failed to send mail: " + JSON.stringify(err));
+          emailjs.send("service_w521878m", "template_uk2gvi", {
+            name: name,
+            email: email,
+            time: timeStr
+          }).then(() => {
+            alert(`✅ ${timeStr} has been selected and mailed to you!`);
+          }).catch(err => {
+            console.error(err);
+            alert("❌ Error sending email.");
           });
         }
       });
 
-      // Increment 30 minutes
-      minute += 30;
-      if (minute === 60) {
-        minute = 0;
-        hour++;
-      }
-      if (hour === 24 && minute === 0) break; // stop at 00:00
+      grid.appendChild(btn);
     }
-
-    // Add 00:00 manually at the end
-    const midnightBtn = document.createElement("button");
-    midnightBtn.className = "option time-btn";
-    midnightBtn.textContent = "00:00";
-    grid.appendChild(midnightBtn);
-    midnightBtn.addEventListener("click", () => {
-      if (confirm(`Do you want to confirm 00:00?`)) {
-        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-            time: "00:00",
-            to_email: "devanshjain535@gmail.com"
-        })
-        .then(() => {
-          alert(`✅ 00:00 has been selected and mailed!`);
-        }, (err) => {
-          alert("❌ Failed to send mail: " + JSON.stringify(err));
-        });
-      }
-    });
   </script>
 </body>
 </html>
->
