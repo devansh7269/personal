@@ -53,6 +53,22 @@
     for (let i = 0; i < 20; i++) createFloating('balloon');
     for (let i = 0; i < 24; i++) createFloating('heart');
   </script>
+  <script>
+  const text = "Wait kis baat kar rahe ho? I am all yours 💕";
+  const el = document.getElementById("typingText");
+  el.classList.add("typing");
+
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, 80); // typing speed (80ms per character)
+    }
+  }
+
+  type();
+</script>
 </body>
 </html>
 <script>
