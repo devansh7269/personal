@@ -4,82 +4,75 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Select Time ⏰</title>
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <style>
+    body { font-family: system-ui, Arial; max-width: 700px; margin: 24px auto; padding: 0 12px; text-align: center; }
+    .card { padding: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); background: #f9f9f9; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+    .time-btn { padding: 10px; border: none; border-radius: 6px; background: #007bff; color: #fff; cursor: pointer; font-size: 14px; }
+    .time-btn:hover { background: #0056b3; }
+    input { padding: 8px; margin: 6px 0; width: 100%; border: 1px solid #ccc; border-radius: 6px; }
+  </style>
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     (function(){
-      emailjs.init("wW8gn7lzT7qSAWFEG"); // ✅ Your Public Key
+      emailjs.init("wW8gn7lzT7qSAWFEG"); // your Public Key
     })();
   </script>
-  <style>
-    body { font-family: system-ui, Arial; max-width: 700px; margin: 24px auto; padding: 0 12px; }
-    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .time-btn { padding: 10px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; }
-    .time-btn:hover { background: #f0f0f0; }
-    .card { padding: 20px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .centered { display: flex; justify-content: center; align-items: center; height: 100vh; }
-    input { width: 100%; padding: 8px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
-    button { font-size: 14px; }
-  </style>
 </head>
 <body>
-  <main class="centered">
-    <section class="card content">
-      <h2>Select your time ⏰</h2>
+  <main>
+    <section class="card">
+      <h2>Book Your Time ⏰</h2>
 
-      <!-- Name + Email input -->
-      <form id="userForm">
-        <input type="text" id="userName" placeholder="Your Name" required />
-        <input type="email" id="userEmail" placeholder="Your Email" required />
-      </form>
+      <!-- User details -->
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Your Email" required />
 
-      <!-- Time selection grid -->
-      <div class="grid" id="timeSlots"></div>
+      <h3>Select a time slot:</h3>
+      <div class="grid" id="timeGrid"></div>
     </section>
   </main>
 
   <script>
-    const grid = document.getElementById("timeSlots");
+    // Generate time slots from 8:00 AM to 12:00 midnight (30 min gap)
+    const grid = document.getElementById("timeGrid");
+    let start = new Date();
+    start.setHours(8,0,0,0); // 8:00 AM
+    let end = new Date();
+    end.setHours(24,0,0,0); // midnight
 
-    // Generate time slots from 8:00 AM to 12:00 Midnight
-    let start = 8 * 60;   // 8:00 AM in minutes
-    let end = 24 * 60;    // 12:00 midnight in minutes
-
-    for (let mins = start; mins <= end; mins += 30) {
-      let hours = Math.floor(mins / 60);
-      let minutes = mins % 60;
-      let suffix = hours >= 12 ? "PM" : "AM";
-      let displayHours = ((hours + 11) % 12 + 1); 
-      let timeStr = `${displayHours}:${minutes.toString().padStart(2,"0")} ${suffix}`;
-
+    while(start <= end){
       let btn = document.createElement("button");
       btn.className = "time-btn";
-      btn.type = "button";
-      btn.textContent = timeStr;
+      btn.textContent = start.toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"});
+      grid.appendChild(btn);
 
       btn.addEventListener("click", () => {
-        let name = document.getElementById("userName").value.trim();
-        let email = document.getElementById("userEmail").value.trim();
+        const userName = document.getElementById("name").value;
+        const userEmail = document.getElementById("email").value;
 
-        if (!name || !email) {
+        if(!userName || !userEmail){
           alert("⚠️ Please enter your name and email first.");
           return;
         }
 
-        if (confirm(`Do you want to confirm ${timeStr}?`)) {
-          emailjs.send("service_w521878m", "template_uk2gvi", {
-            name: name,
-            email: email,
-            time: timeStr
-          }).then(() => {
-            alert(`✅ ${timeStr} has been selected and mailed to you!`);
-          }).catch(err => {
+        if(confirm(`Do you want to confirm ${btn.textContent}?`)){
+          emailjs.send("service_w521878m","template_uk2gvi",{
+            name: userName,
+            email: userEmail,
+            time: btn.textContent
+          })
+          .then(() => {
+            alert(`✅ ${btn.textContent} has been sent to Devansh's email!`);
+          }, (err) => {
+            alert("❌ Failed to send. Check console.");
             console.error(err);
-            alert("❌ Error sending email.");
           });
         }
       });
 
-      grid.appendChild(btn);
+      start.setMinutes(start.getMinutes() + 30);
     }
   </script>
 </body>
