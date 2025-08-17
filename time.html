@@ -43,7 +43,7 @@
 
       btn.addEventListener("click", () => {
         if(confirm(`Do you want to confirm ${btn.textContent}?`)){
-          emailjs.send("service_w521878m","template_uk2gvi",{
+          emailjs.send("service_w52178m","template_uk2gvi",{
             time: btn.textContent
           })
           .then(() => {
