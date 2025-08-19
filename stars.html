@@ -51,6 +51,23 @@
       from { opacity: 0; transform: translate(-50%, -40%); }
       to { opacity: 1; transform: translate(-50%, -50%); }
     }
+
+    /* Shooting star */
+    .shooting-star {
+      position: absolute;
+      width: 3px;
+      height: 80px;
+      background: linear-gradient(white, transparent);
+      transform: rotate(45deg);
+      opacity: 0.8;
+      pointer-events: none;
+      animation: shoot 1.5s linear forwards;
+    }
+
+    @keyframes shoot {
+      from { transform: translate(0,0) rotate(45deg); opacity: 1; }
+      to { transform: translate(-300px, 300px) rotate(45deg); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -66,7 +83,7 @@
       "With you, life sparkles 💎"
     ];
 
-    // Create random stars
+    // Create random twinkling stars
     for (let i = 0; i < 80; i++) {
       const star = document.createElement("div");
       star.className = "star";
@@ -80,16 +97,40 @@
       });
     }
 
-    function showPopup(x, y) {
+    function showPopup(x, y, customMessage=null) {
       const popup = document.createElement("div");
       popup.className = "popup";
-      popup.textContent = loveNotes[Math.floor(Math.random() * loveNotes.length)];
+      popup.textContent = customMessage || loveNotes[Math.floor(Math.random() * loveNotes.length)];
       popup.style.left = x + "px";
       popup.style.top = y + "px";
       document.body.appendChild(popup);
 
-      setTimeout(() => popup.remove(), 2000);
+      setTimeout(() => popup.remove(), 2500);
     }
+
+    // Shooting stars appear randomly
+    function createShootingStar() {
+      const star = document.createElement("div");
+      star.className = "shooting-star";
+
+      // Random start position near top-right
+      star.style.top = Math.random() * 40 + "vh";
+      star.style.left = (60 + Math.random() * 40) + "vw";
+
+      document.body.appendChild(star);
+
+      // Show popup message where it passes
+      setTimeout(() => {
+        const rect = star.getBoundingClientRect();
+        showPopup(rect.left, rect.top, "You are my wish come true 💖");
+      }, 600);
+
+      // Remove after animation
+      setTimeout(() => star.remove(), 1500);
+    }
+
+    // Launch a shooting star every 5–10 seconds
+    setInterval(createShootingStar, Math.random() * 5000 + 5000);
   </script>
 </body>
 </html>
