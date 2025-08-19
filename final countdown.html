@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Birthday Countdown 🎂</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .timer {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #ff4d6d;
+    }
+  </style>
+</head>
+<body>
+  <div class="background" id="bg"></div>
+  <main class="centered">
+    <section class="card content">
+      <h2>Countdown to Your Birthday 🎉</h2>
+      <p class="notice">Can’t wait to celebrate with you 🥰</p>
+      <div class="timer" id="countdown"></div>
+
+      <div style="margin-top:16px;">
+        <a class="btn" href="index.html">Back to start</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating hearts & balloons -->
+  <script>
+    const bg = document.getElementById('bg');
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+    function createFloating(kind) {
+      const el = document.createElement('div');
+      el.classList.add('floating', kind);
+      el.style.left = rand(-5, 100) + 'vw';
+      const duration = rand(8, 18);
+      el.style.animationDuration = duration + 's';
+      el.style.animationDelay = rand(0, 8) + 's';
+      el.style.opacity = rand(0.7, 1).toFixed(2);
+      const size = kind === 'heart' ? rand(14, 28) : rand(20, 42);
+      el.style.width = size + 'px';
+      el.style.height = (kind === 'heart' ? size : size * 1.3) + 'px';
+      bg.appendChild(el);
+      el.addEventListener('animationend', () => { el.remove(); createFloating(kind); });
+    }
+    for (let i = 0; i < 20; i++) createFloating('balloon');
+    for (let i = 0; i < 24; i++) createFloating('heart');
+  </script>
+
+  <!-- Countdown Script -->
+  <script>
+    function getNextBirthday(month, day) {
+      const now = new Date();
+      let year = now.getFullYear();
+      let birthday = new Date(year, month - 1, day, 0, 0, 0); // midnight
+
+      // if birthday already passed this year → set next year
+      if (birthday.getTime() < now.getTime()) {
+        birthday = new Date(year + 1, month - 1, day, 0, 0, 0);
+      }
+      return birthday.getTime();
+    }
+
+    const targetDate = getNextBirthday(10, 27); // 🎯 27 October
+
+    const countdownEl = document.getElementById("countdown");
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance < 0) {
+        countdownEl.innerHTML = "🎂 Happy Birthday, Princess! 💖";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownEl.innerHTML = 
+        days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
