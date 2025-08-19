@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Special Page 💖</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="background" id="bg"></div>
+  <main class="centered">
+    <section class="card content">
+      <h2>You found the secret! 🥳</h2>
+      <p class="notice">This is only for you… forever my <b>Princess 👑</b> 💘</p>
+      <div style="margin-top:16px;">
+        <a class="btn" href="index.html">Back to start</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating balloons & hearts -->
+  <script>
+    const bg = document.getElementById('bg');
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+    function createFloating(kind) {
+      const el = document.createElement('div');
+      el.classList.add('floating', kind);
+      el.style.left = rand(-5, 100) + 'vw';
+      const duration = rand(8, 18);
+      el.style.animationDuration = duration + 's';
+      el.style.animationDelay = rand(0, 8) + 's';
+      el.style.opacity = rand(0.7, 1).toFixed(2);
+      const size = kind === 'heart' ? rand(14, 28) : rand(20, 42);
+      el.style.width = size + 'px';
+      el.style.height = (kind === 'heart' ? size : size * 1.3) + 'px';
+      bg.appendChild(el);
+      el.addEventListener('animationend', () => { el.remove(); createFloating(kind); });
+    }
+    for (let i = 0; i < 20; i++) createFloating('balloon');
+    for (let i = 0; i < 24; i++) createFloating('heart');
+  </script>
+</body>
+</html>
