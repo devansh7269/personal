@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Floating Compliments 💕</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(to top right, #ffdde1, #ee9ca7);
+      overflow: hidden;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .compliment {
+      position: absolute;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      animation: float 12s linear infinite;
+      opacity: 0.8;
+      white-space: nowrap;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  const compliments = [
+    "You are beautiful 💖",
+    "My sunshine ☀️",
+    "Forever mine 💍",
+    "Cutest smile 😊",
+    "My dream girl 🌸",
+    "You make my world glow ✨",
+    "Sweetest soul 💕",
+    "Always in my heart ❤️",
+    "My princess 👑",
+    "You’re my everything 💫"
+  ];
+
+  function createCompliment() {
+    const div = document.createElement("div");
+    div.className = "compliment";
+    div.textContent = compliments[Math.floor(Math.random() * compliments.length)];
+
+    // Random horizontal position
+    div.style.left = Math.random() * 90 + "vw";
+
+    // Different speeds
+    div.style.animationDuration = (10 + Math.random() * 8) + "s";
+
+    document.body.appendChild(div);
+
+    // Remove after floating
+    setTimeout(() => div.remove(), 15000);
+  }
+
+  // Keep generating compliments every 2–3 seconds
+  setInterval(createCompliment, 2500);
+</script>
+
+</body>
+</html>
