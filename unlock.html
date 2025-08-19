@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Secret Unlock 🔐</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .unlock-box {
+      margin-top: 20px;
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 16px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #ff4d6d;
+      color: white;
+      cursor: pointer;
+    }
+    #error {
+      color: red;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="background" id="bg"></div>
+  <main class="centered">
+    <section class="card content">
+      <h2>Enter the Secret Code 🔑</h2>
+      <div class="unlock-box">
+        <input type="password" id="codeInput" placeholder="Enter nickname..." />
+        <button onclick="checkCode()">Unlock</button>
+      </div>
+      <p id="error">❌ Wrong code! Try again.</p>
+      <div style="margin-top:16px;">
+        <a class="btn" href="index.html">Back to start</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating animation -->
+  <script>
+    const bg = document.getElementById('bg');
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+    function createFloating(kind) {
+      const el = document.createElement('div');
+      el.classList.add('floating', kind);
+      el.style.left = rand(-5, 100) + 'vw';
+      const duration = rand(8, 18);
+      el.style.animationDuration = duration + 's';
+      el.style.animationDelay = rand(0, 8) + 's';
+      el.style.opacity = rand(0.7, 1).toFixed(2);
+      const size = kind === 'heart' ? rand(14, 28) : rand(20, 42);
+      el.style.width = size + 'px';
+      el.style.height = (kind === 'heart' ? size : size * 1.3) + 'px';
+      bg.appendChild(el);
+      el.addEventListener('animationend', () => { el.remove(); createFloating(kind); });
+    }
+    for (let i = 0; i < 20; i++) createFloating('balloon');
+    for (let i = 0; i < 24; i++) createFloating('heart');
+  </script>
+
+  <!-- Code check -->
+  <script>
+    function checkCode() {
+      const input = document.getElementById("codeInput").value.trim().toLowerCase();
+      const secret = "madam ji"; // <<=== CHANGE THIS to her nickname
+      if (input === secret) {
+        window.location.href = "special.html";
+      } else {
+        document.getElementById("error").style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
