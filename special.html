@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Special Page 💖</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .love-text {
+      position: absolute;
+      font-size: 12px;
+      color: rgba(255, 77, 109, 0.4); /* light pink shade */
+      font-weight: bold;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+  </style>
 </head>
 <body>
   <div class="background" id="bg"></div>
@@ -21,7 +32,10 @@
   <!-- Floating balloons & hearts -->
   <script>
     const bg = document.getElementById('bg');
+
     function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    // Floating hearts/balloons
     function createFloating(kind) {
       const el = document.createElement('div');
       el.classList.add('floating', kind);
@@ -38,6 +52,21 @@
     }
     for (let i = 0; i < 20; i++) createFloating('balloon');
     for (let i = 0; i < 24; i++) createFloating('heart');
+
+    // Background "I love you" texts
+    function createLoveTexts() {
+      for (let i = 0; i < 200; i++) { // create 200 texts
+        const text = document.createElement('div');
+        text.classList.add('love-text');
+        text.innerText = "I love you";
+        text.style.top = rand(0, 100) + "vh";
+        text.style.left = rand(0, 100) + "vw";
+        text.style.fontSize = rand(10, 18) + "px";
+        text.style.opacity = rand(0.2, 0.6).toFixed(2);
+        bg.appendChild(text);
+      }
+    }
+    createLoveTexts();
   </script>
 </body>
 </html>
