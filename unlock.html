@@ -80,9 +80,15 @@
       const ans1 = document.getElementById("q1").value.trim().toLowerCase();
       const ans2 = document.getElementById("q2").value.trim().toLowerCase();
 
-      // Allowed answers
-      const secret1 = ["madam ji"];  
-      const secret2 = ["mein hamesa tumhare sath rahungi"];
+      // Multiple accepted answers
+      const secret1 = ["madam ji", "madamji", "madam", "meri madam"];  
+      const secret2 = [
+        "mein hamesa tumhare sath rahungi",
+        "main hamesa tumhare sath rahungi",
+        "hamesa tumhare sath rahungi",
+        "always with you",
+        "i will always be with you"
+      ];
 
       const correct1 = secret1.includes(ans1);
       const correct2 = secret2.includes(ans2);
