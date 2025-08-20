@@ -3,107 +3,206 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Secret Unlock 🔐</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Unlock the Secret 💖</title>
   <style>
-    .unlock-box {
-      margin-top: 20px;
+    body {
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      overflow: hidden;
+    }
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       text-align: center;
+      max-width: 380px;
+      width: 90%;
+      position: relative;
+    }
+    h2 {
+      margin-bottom: 16px;
     }
     input {
+      width: 90%;
       padding: 10px;
-      font-size: 16px;
+      margin: 8px 0;
+      border: 2px solid #ddd;
       border-radius: 8px;
-      border: 1px solid #aaa;
-      margin-bottom: 12px;
-      width: 80%;
-      max-width: 260px;
+      font-size: 16px;
+      outline: none;
+      transition: 0.3s;
     }
-    button {
-      padding: 10px 16px;
+    input.correct { border-color: #4CAF50; box-shadow: 0 0 8px #4CAF50; }
+    input.wrong { border-color: #f44336; animation: shake 0.3s; }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    .btn {
+      margin-top: 14px;
+      padding: 10px 18px;
       font-size: 16px;
       border: none;
-      border-radius: 8px;
       background: #ff4d6d;
       color: white;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover { background: #e63e5c; }
+    .error { color: #f44336; display: none; margin-top: 8px; }
+    .typing {
+      margin: 12px 0;
+      color: #666;
+      font-size: 14px;
+      min-height: 20px;
+      font-style: italic;
+    }
+    .lock {
+      font-size: 40px;
+      margin-bottom: 10px;
+      transition: transform 0.6s ease;
+    }
+    .lock.unlocked { transform: rotateY(180deg); }
+    .hint {
+      margin-top: 10px;
+      font-size: 18px;
       cursor: pointer;
     }
-    #error {
-      color: red;
-      margin-top: 10px;
-      display: none;
+    .hint-text { display: none; margin-top: 6px; font-size: 14px; color: #444; }
+    .love-meter {
+      margin-top: 12px;
+      background: #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 14px;
+      width: 100%;
+    }
+    .love-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff4d6d, #ff85a2);
+      transition: width 0.5s;
+    }
+    /* Heart particles */
+    .heart {
+      position: fixed;
+      font-size: 20px;
+      animation: floatUp 2s forwards;
+      pointer-events: none;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-150px) scale(1.6); }
     }
   </style>
 </head>
 <body>
-  <div class="background" id="bg"></div>
-  <main class="centered">
-    <section class="card content">
-      <h2>Answer My Two Questions 🔑</h2>
-      <div class="unlock-box">
-        <input type="text" id="q1" placeholder="👉 What I call you?" /><br>
-        <input type="text" id="q2" placeholder="👉 Main kya sunna chahta hu?" /><br>
-        <button onclick="checkCode()">Unlock</button>
-      </div>
-      <p id="error">❌ Wrong answers! Try again.</p>
-      <div style="margin-top:16px;">
-        <a class="btn" href="index.html">Back to start</a>
-      </div>
-    </section>
-  </main>
+  <div class="card">
+    <div class="lock" id="lock">🔒</div>
+    <h2>Unlock the Secret 💘</h2>
+    <input id="q1" type="text" placeholder="What I call you?" />
+    <input id="q2" type="text" placeholder="Main kya sunna chahta hu?" />
+    <button class="btn" onclick="checkCode()">Unlock</button>
+    <div class="error" id="error">❌ Wrong! Try again.</div>
+    <div class="typing" id="typing"></div>
+    <div class="hint" onclick="showHint()">💖 Need a hint?</div>
+    <div class="hint-text" id="hintText">Clue: Main tumhe “Madam Ji” bulata hu 😉</div>
+    <div id="triesLeft" style="margin-top:8px; font-size:14px; color:#333;"></div>
+    <div class="love-meter"><div class="love-fill" id="loveFill"></div></div>
+  </div>
 
-  <!-- Floating animation -->
   <script>
-    const bg = document.getElementById('bg');
-    function rand(min, max) { return Math.random() * (max - min) + min; }
-    function createFloating(kind) {
-      const el = document.createElement('div');
-      el.classList.add('floating', kind);
-      el.style.left = rand(-5, 100) + 'vw';
-      const duration = rand(8, 18);
-      el.style.animationDuration = duration + 's';
-      el.style.animationDelay = rand(0, 8) + 's';
-      el.style.opacity = rand(0.7, 1).toFixed(2);
-      const size = kind === 'heart' ? rand(14, 28) : rand(20, 42);
-      el.style.width = size + 'px';
-      el.style.height = (kind === 'heart' ? size : size * 1.3) + 'px';
-      bg.appendChild(el);
-      el.addEventListener('animationend', () => { el.remove(); createFloating(kind); });
+    const typingText = "💭 Think carefully… the answer is only between us.";
+    let typingIndex = 0;
+    function typeEffect() {
+      if (typingIndex < typingText.length) {
+        document.getElementById("typing").textContent += typingText.charAt(typingIndex);
+        typingIndex++;
+        setTimeout(typeEffect, 60);
+      }
     }
-    for (let i = 0; i < 20; i++) createFloating('balloon');
-    for (let i = 0; i < 24; i++) createFloating('heart');
-  </script>
+    typeEffect();
 
-  <!-- Code check -->
-  <script>
+    let tries = 3;
+    updateTries();
+    function updateTries() {
+      document.getElementById("triesLeft").textContent = "❤️ Tries left: " + tries;
+    }
+
+    function showHint() {
+      document.getElementById("hintText").style.display = "block";
+    }
+
+    function createHeartBurst() {
+      for (let i = 0; i < 8; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = "💖";
+        heart.style.left = (window.innerWidth/2 + (Math.random()*100-50)) + "px";
+        heart.style.top = (window.innerHeight/2 + (Math.random()*50-25)) + "px";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 2000);
+      }
+    }
+
     function checkCode() {
       const ans1 = document.getElementById("q1").value.trim().toLowerCase();
       const ans2 = document.getElementById("q2").value.trim().toLowerCase();
 
-      // Multiple accepted answers
-      const secret1 = ["madam ji", "madamji", "madam", "meri madam"];  
+      const secret1 = ["madam ji","madamji","madam"]; 
       const secret2 = [
         "mein hamesa tumhare sath rahungi",
         "main hamesa tumhare sath rahungi",
         "hamesa tumhare sath rahungi",
-        "always with you",
-        "i will always be with you"
+        "hum hamesa tumhare sath rahega",
+        "always with you"
       ];
 
-      const correct1 = secret1.includes(ans1);
-      const correct2 = secret2.includes(ans2);
+      const input1 = document.getElementById("q1");
+      const input2 = document.getElementById("q2");
+
+      let correct1 = secret1.includes(ans1);
+      let correct2 = secret2.includes(ans2);
+
+      input1.classList.remove("correct","wrong");
+      input2.classList.remove("correct","wrong");
+
+      if (correct1) { input1.classList.add("correct"); }
+      else { input1.classList.add("wrong"); }
+
+      if (correct2) { input2.classList.add("correct"); }
+      else { input2.classList.add("wrong"); }
 
       if (correct1 && correct2) {
-        // Both correct → Lovely page
-        window.location.href = "special.html";
-      } 
-      else if (correct1 || correct2) {
-        // One correct → Partial unlock page
-        window.location.href = "partial.html";
-      } 
-      else {
-        // Wrong
+        document.getElementById("error").style.display = "none";
+        document.getElementById("lock").textContent = "🔓";
+        document.getElementById("lock").classList.add("unlocked");
+        document.getElementById("loveFill").style.width = "100%";
+        createHeartBurst();
+        setTimeout(()=>{ window.location.href="special.html"; },2000);
+      } else if (correct1 || correct2) {
+        document.getElementById("error").textContent = "💡 Half correct! You're close.";
         document.getElementById("error").style.display = "block";
+        document.getElementById("loveFill").style.width = "50%";
+        setTimeout(()=>{ window.location.href="partial.html"; },2000);
+      } else {
+        tries--;
+        updateTries();
+        document.getElementById("error").textContent = "❌ Wrong! Try again.";
+        document.getElementById("error").style.display = "block";
+        document.getElementById("loveFill").style.width = "0%";
+        if (tries <= 0) {
+          alert("Out of tries 😢 Refresh to try again.");
+        }
       }
     }
   </script>
