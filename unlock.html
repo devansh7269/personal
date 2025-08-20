@@ -15,7 +15,9 @@
       font-size: 16px;
       border-radius: 8px;
       border: 1px solid #aaa;
-      margin-right: 10px;
+      margin-bottom: 12px;
+      width: 80%;
+      max-width: 260px;
     }
     button {
       padding: 10px 16px;
@@ -37,12 +39,13 @@
   <div class="background" id="bg"></div>
   <main class="centered">
     <section class="card content">
-      <h2>Enter the Secret Code 🔑</h2>
+      <h2>Answer My Two Questions 🔑</h2>
       <div class="unlock-box">
-        <input type="password" id="codeInput" placeholder="Enter nickname..." />
+        <input type="text" id="q1" placeholder="👉 What I call you?" /><br>
+        <input type="text" id="q2" placeholder="👉 Main kya sunna chahta hu?" /><br>
         <button onclick="checkCode()">Unlock</button>
       </div>
-      <p id="error">❌ Wrong code! Try again.</p>
+      <p id="error">❌ Wrong answers! Try again.</p>
       <div style="margin-top:16px;">
         <a class="btn" href="index.html">Back to start</a>
       </div>
@@ -74,11 +77,26 @@
   <!-- Code check -->
   <script>
     function checkCode() {
-      const input = document.getElementById("codeInput").value.trim().toLowerCase();
-      const secret = "madam ji"; // <<=== CHANGE THIS to her nickname
-      if (input === secret) {
+      const ans1 = document.getElementById("q1").value.trim().toLowerCase();
+      const ans2 = document.getElementById("q2").value.trim().toLowerCase();
+
+      // Allowed answers
+      const secret1 = ["madam ji"];  
+      const secret2 = ["mein hamesa tumhare sath rahungi"];
+
+      const correct1 = secret1.includes(ans1);
+      const correct2 = secret2.includes(ans2);
+
+      if (correct1 && correct2) {
+        // Both correct → Lovely page
         window.location.href = "special.html";
-      } else {
+      } 
+      else if (correct1 || correct2) {
+        // One correct → Partial unlock page
+        window.location.href = "partial.html";
+      } 
+      else {
+        // Wrong
         document.getElementById("error").style.display = "block";
       }
     }
