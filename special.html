@@ -3,17 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Special Page 💖</title>
+  <title>Our Special Secret 💖</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
     .love-text {
       position: absolute;
       font-size: 12px;
-      color: rgba(255, 77, 109, 0.4); /* light pink shade */
+      color: rgba(255, 77, 109, 0.4);
       font-weight: bold;
       white-space: nowrap;
       pointer-events: none;
       user-select: none;
+    }
+    .big-message {
+      font-size: clamp(22px, 6vw, 40px);
+      color: #ff4d6d;
+      margin-bottom: 20px;
     }
   </style>
 </head>
@@ -21,21 +26,21 @@
   <div class="background" id="bg"></div>
   <main class="centered">
     <section class="card content">
-      <h2>You found the secret! 🥳</h2>
-      <p class="notice">This is only for you… forever my <b>Princess 👑</b> 💘</p>
+      <h2 class="big-message">💖 You answered both! 💖</h2>
+      <p class="notice">This is our secret place forever…<br>
+      Always yours, my <b>Princess 👑</b> 💘</p>
+      <p style="margin-top:12px; font-style:italic;">“I love you more than words can say.”</p>
       <div style="margin-top:16px;">
         <a class="btn" href="index.html">Back to start</a>
       </div>
     </section>
   </main>
 
-  <!-- Floating balloons & hearts -->
+  <!-- Floating balloons, hearts & background texts -->
   <script>
     const bg = document.getElementById('bg');
-
     function rand(min, max) { return Math.random() * (max - min) + min; }
 
-    // Floating hearts/balloons
     function createFloating(kind) {
       const el = document.createElement('div');
       el.classList.add('floating', kind);
@@ -53,12 +58,11 @@
     for (let i = 0; i < 20; i++) createFloating('balloon');
     for (let i = 0; i < 24; i++) createFloating('heart');
 
-    // Background "I love you" texts
     function createLoveTexts() {
-      for (let i = 0; i < 200; i++) { // create 200 texts
+      for (let i = 0; i < 200; i++) {
         const text = document.createElement('div');
         text.classList.add('love-text');
-        text.innerText = "I love you";
+        text.innerText = "I love you 💕";
         text.style.top = rand(0, 100) + "vh";
         text.style.left = rand(0, 100) + "vw";
         text.style.fontSize = rand(10, 18) + "px";
