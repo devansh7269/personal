@@ -7,25 +7,77 @@
   <link rel="stylesheet" href="styles.css" />
   <style>
     body {
+      margin: 0;
+      overflow: hidden;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background: linear-gradient(to top right, #ffdde1, #ee9ca7);
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
       font-family: "Segoe UI", sans-serif;
       color: white;
+    }
+
+    /* Floating hearts background */
+    .background {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .heart {
+      position: absolute;
+      bottom: -50px;
+      width: 20px;
+      height: 20px;
+      background: pink;
+      transform: rotate(45deg);
+      animation: floatUp linear infinite;
+      opacity: 0.7;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+    .heart::after {
+      left: -10px;
+      top: 0;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(0) rotate(45deg); opacity: 1; }
+      to { transform: translateY(-110vh) rotate(45deg); opacity: 0; }
+    }
+
+    /* Poem text */
+    .poem {
+      z-index: 2;
+      max-width: 650px;
+      font-size: 22px;
+      line-height: 1.8;
+      white-space: pre-line;
       text-align: center;
       padding: 20px;
-    }
-    .poem {
-      max-width: 600px;
-      font-size: 20px;
-      line-height: 1.6;
-      white-space: pre-line;
-      border-right: 2px solid rgba(255,255,255,0.75);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: fadeIn 2s ease forwards;
+      color: #fff;
+      text-shadow: 0 0 12px rgba(255,255,255,0.8);
       overflow: hidden;
-      animation: typing 12s steps(50, end), blink .8s step-end infinite alternate;
+      border-right: 3px solid rgba(255,255,255,0.75);
+      animation: typing 12s steps(60, end), blink .9s step-end infinite alternate, fadeIn 2s ease;
     }
+
     @keyframes typing {
       from { width: 0 }
       to { width: 100% }
@@ -33,9 +85,15 @@
     @keyframes blink {
       50% { border-color: transparent }
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
   </style>
 </head>
 <body>
+  <div class="background" id="bg"></div>
+
   <div class="poem">
 kya ye sach hai , mujhe haak hai apko apna khaheneka?
 apke haato ko thamne ka ?
@@ -46,5 +104,25 @@ un gaalo ko sahelane ka  ?
 kya ye sach hai ki mujhe haaq hai  
 apko apna kahene ka ?
   </div>
+
+  <script>
+    // Create floating hearts
+    const bg = document.getElementById('bg');
+    function random(min, max) { return Math.random() * (max - min) + min; }
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.style.left = random(0, 100) + "vw";
+      heart.style.width = heart.style.height = random(15, 30) + "px";
+      heart.style.animationDuration = random(6, 12) + "s";
+      heart.style.background = ["#ff4d6d","#ff6f91","#ff85a2","#ff99ac"][Math.floor(Math.random()*4)];
+      bg.appendChild(heart);
+
+      setTimeout(() => { heart.remove(); }, 12000);
+    }
+
+    setInterval(createHeart, 500);
+  </script>
 </body>
 </html>
