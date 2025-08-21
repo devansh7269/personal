@@ -76,6 +76,7 @@
       margin-top: 10px;
       color: red;
       font-size: 16px;
+      min-height: 1em;
     }
   </style>
 </head>
@@ -84,25 +85,25 @@
 <!-- Lock screen -->
 <div class="lock-screen" id="lockScreen">
   💕 To unlock, answer this question 💕  
-  <p>If i want to describe u from a shot of a virat , than which shot will it be ?? 🌸</p>
+  <p>If I want to describe you from a shot of Virat, then which shot will it be? 🌸</p>
   <input type="text" id="answerInput" placeholder="Type your answer here" />
-  <button onclick="checkAnswer()">Unlock</button>
+  <button id="unlockBtn">Unlock</button>
   <div class="error" id="errorMsg"></div>
 </div>
 
 <script>
   const compliments = [
-    "aadat se ho gayi hai haar waqt tere baare mein sochne ki
-    pata nahi ye mohbaat hai ya pagalpan 💖",
-    "Stay loyal with me and i will prove that not every one leaves 💖",
+    `aadat se ho gayi hai har waqt tere baare mein sochne ki,
+pata nahi ye mohabbat hai ya pagalpan 💖`,
+    "Stay loyal with me and I will prove that not everyone leaves 💖",
     "Forever mine 💍",
     "Cutest smile 😊",
-    "jab mein mangu koi mahenga toofa tho thum dher sra waqt lekar aana 🌸",
+    "jab mein mangu koi mehenga tohfa to tum dher saara waqt lekar aana 🌸",
     "You make my world glow ✨",
     "Sweetest soul 💕",
     "Always in my heart ❤️",
     "My princess 👑",
-    "teach me how to love u because i wanna love u the way u wnated to be loved"
+    "teach me how to love u because i wanna love u the way u wanted to be loved"
   ];
 
   let complimentsInterval;
@@ -117,19 +118,43 @@
     setTimeout(() => div.remove(), 15000);
   }
 
-  // Question + Answer check
-  function checkAnswer() {
-    const input = document.getElementById("answerInput").value.trim().toLowerCase();
-    const error = document.getElementById("errorMsg");
+  // Normalize helper (remove spaces/hyphens, lowercase)
+  function normalize(s) {
+    return s.trim().toLowerCase().replace(/[\s-]+/g, "");
+  }
 
-    // 👉 Correct answer (change if needed)
-    if (input === "cover drive") {
+  function checkAnswer() {
+    const inputEl = document.getElementById("answerInput");
+    const error = document.getElementById("errorMsg");
+    const val = normalize(inputEl.value);
+
+    const accepted = ["coverdrive"]; // accepts "cover drive", "cover-drive", "coverdrive"
+
+    if (accepted.includes(val)) {
       document.getElementById("lockScreen").style.display = "none";
+      // start immediately and then keep spawning
+      createCompliment();
       complimentsInterval = setInterval(createCompliment, 2500);
     } else {
       error.textContent = "Wrong answer 😢 Try again!";
     }
   }
+
+  // Wire up events
+  const inputEl = document.getElementById("answerInput");
+  const btn = document.getElementById("unlockBtn");
+  const error = document.getElementById("errorMsg");
+
+  btn.addEventListener("click", checkAnswer);
+  inputEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") checkAnswer();
+  });
+  inputEl.addEventListener("input", () => {
+    error.textContent = "";
+  });
+
+  // Autofocus
+  setTimeout(() => inputEl.focus(), 200);
 </script>
 
 </body>
