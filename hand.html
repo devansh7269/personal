@@ -5,85 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Haat Pakdu 💞</title>
   <link rel="stylesheet" href="styles.css" />
-
   <style>
-    /* --- Unlock overlay --- */
-    .gate-overlay {
-      position: fixed;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 221, 225, 0.6);
-      backdrop-filter: blur(2px);
-      z-index: 50;
-    }
-    .gate-card {
-      background: #fff;
-      width: min(92vw, 420px);
-      padding: 22px;
-      border-radius: 20px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
-      text-align: center;
-    }
-    .gate-card h2 {
-      margin: 0 0 10px;
-      font-size: clamp(18px, 4.5vw, 24px);
-      color: #ff4d6d;
-    }
-    .gate-card p {
-      margin: 6px 0 14px;
-      color: #444;
-      font-size: 15px;
-      line-height: 1.35;
-    }
-    .gate-input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      font-size: 16px;
-      outline: none;
-      transition: .25s;
-    }
-    .gate-input.correct { border-color: #22c55e; box-shadow: 0 0 10px rgba(34,197,94,.35); }
-    .gate-input.wrong   { border-color: #ef4444; animation: gate-shake .25s; }
-    @keyframes gate-shake {
-      25% { transform: translateX(-4px); }
-      50% { transform: translateX(4px); }
-      75% { transform: translateX(-2px); }
-    }
-    .gate-btn {
-      margin-top: 10px;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 12px;
-      background: #ff4d6d;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-      transition: .25s;
-    }
-    .gate-btn:hover { filter: brightness(.95); }
-    .gate-error {
-      margin-top: 8px;
-      color: #ef4444;
-      display: none;
-      font-size: 14px;
-    }
-    .gate-reason {
-      margin-top: 8px;
-      font-size: 12px;
-      color: #444;
-      display: none;
-    }
-    .fade-out {
-      animation: fadeOut .6s forwards ease;
-    }
-    @keyframes fadeOut {
-      to { opacity: 0; visibility: hidden; }
-    }
-
-    /* Extra styles for buttons from your original page */
+    /* Extra styles for buttons */
     .choice-buttons {
       margin-top: 20px;
       display: flex;
@@ -98,8 +21,15 @@
       cursor: pointer;
       transition: 0.3s ease;
     }
-    .yes-btn { background: #ff4d6d; color: white; }
-    .no-btn  { background: #aaa; color: black; position: relative; }
+    .yes-btn {
+      background: #ff4d6d;
+      color: white;
+    }
+    .no-btn {
+      background: #aaa;
+      color: black;
+      position: relative;
+    }
     #surpriseMessage {
       margin-top: 20px;
       font-size: 20px;
@@ -110,27 +40,11 @@
   </style>
 </head>
 <body>
-  <!-- Background stays the same -->
   <div class="background" id="bg"></div>
-
-  <!-- 🔒 Gate Overlay -->
-  <div class="gate-overlay" id="gate">
-    <div class="gate-card">
-      <h2>🔐 Answer to enter</h2>
-      <p><b>Question:</b><br>
-        If I want to describe you from a shot of Virat, then which shot will it be?</p>
-      <input id="gateAnswer" class="gate-input" type="text" placeholder="Type your answer..." />
-      <button class="gate-btn" id="gateBtn">Unlock</button>
-      <div class="gate-error" id="gateError">❌ Wrong! Try again.</div>
-      <div class="gate-reason" id="gateReason">because his this shot is perfect</div>
-    </div>
-  </div>
-
-  <!-- Your original content (hidden until unlocked) -->
-  <main class="centered" id="realContent" style="display:none;">
+  <main class="centered">
     <section class="card content">
       <!-- Typing effect -->
-      <h2 id="typingText"></h2>
+      <h2 id="typingText"></h2>  
 
       <div class="choice-buttons">
         <button class="btn-choice yes-btn" onclick="showSurprise()">Yes 💖</button>
@@ -145,7 +59,7 @@
     </section>
   </main>
 
-  <!-- Floating balloons & hearts (same as before) -->
+  <!-- Floating balloons & hearts -->
   <script>
     const bg = document.getElementById('bg');
     function rand(min, max) { return Math.random() * (max - min) + min; }
@@ -167,10 +81,12 @@
     for (let i = 0; i < 24; i++) createFloating('heart');
   </script>
 
-  <!-- Typing effect for main content -->
+  <!-- Typing effect -->
   <script>
     const text = "Apka haat pakr lu? 💕";
     const el = document.getElementById("typingText");
+    el.classList.add("typing");
+
     let i = 0;
     function type() {
       if (i < text.length) {
@@ -179,6 +95,7 @@
         setTimeout(type, 80);
       }
     }
+    type();
   </script>
 
   <!-- Yes/No button logic -->
@@ -186,62 +103,13 @@
     function showSurprise() {
       document.getElementById("surpriseMessage").style.display = "block";
     }
+
     const noBtn = document.getElementById("noBtn");
-    if (noBtn) {
-      noBtn.addEventListener("mouseenter", () => {
-        const x = Math.floor(Math.random() * 200) - 100; // random shift
-        const y = Math.floor(Math.random() * 200) - 100;
-        noBtn.style.transform = `translate(${x}px, ${y}px)`;
-      });
-    }
-  </script>
-
-  <!-- Gate logic -->
-  <script>
-    const gate     = document.getElementById('gate');
-    const input    = document.getElementById('gateAnswer');
-    const btn      = document.getElementById('gateBtn');
-    const errorEl  = document.getElementById('gateError');
-    const reasonEl = document.getElementById('gateReason');
-    const content  = document.getElementById('realContent');
-
-    function normalize(s) {
-      return s.trim().toLowerCase().replace(/\s+/g,' ');
-    }
-
-    function tryUnlock() {
-      const val = normalize(input.value);
-      const accepted = ["cover drive","coverdrive"]; // accept common variants
-
-      input.classList.remove('correct','wrong');
-
-      if (accepted.includes(val)) {
-        // success
-        input.classList.add('correct');
-        errorEl.style.display = 'none';
-        reasonEl.style.display = 'block';
-
-        // reveal content after a short, sweet pause
-        setTimeout(() => {
-          gate.classList.add('fade-out');
-          content.style.display = 'block';
-          type(); // start the typing effect now
-          setTimeout(()=>{ gate.style.display = 'none'; }, 600);
-        }, 900);
-      } else {
-        input.classList.add('wrong');
-        errorEl.style.display = 'block';
-        reasonEl.style.display = 'none';
-      }
-    }
-
-    btn.addEventListener('click', tryUnlock);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') tryUnlock();
+    noBtn.addEventListener("mouseenter", () => {
+      const x = Math.floor(Math.random() * 200) - 100; // random shift
+      const y = Math.floor(Math.random() * 200) - 100;
+      noBtn.style.transform = `translate(${x}px, ${y}px)`;
     });
-
-    // Focus for convenience
-    setTimeout(()=>input.focus(), 300);
   </script>
 </body>
 </html>
