@@ -5,136 +5,201 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🎡 Spin of Love</title>
   <style>
+    :root { --size: 360px; }
     body {
-      font-family: "Poppins", sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      font-family: "Poppins", system-ui, Arial, sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; margin: 0;
       background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-      margin: 0;
     }
-
-    h2 {
-      margin-bottom: 20px;
-      color: #ff4d6d;
-    }
-
-    .wheel-container {
-      position: relative;
-      width: 320px;
-      height: 320px;
-    }
-
+    h2 { margin: 0 0 16px; color: #ff295a; }
+    .wheel-wrap { position: relative; width: var(--size); height: var(--size); }
     .wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 8px solid white;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 100%; height: 100%; border-radius: 50%;
+      border: 10px solid #fff; box-shadow: 0 10px 28px rgba(0,0,0,0.25);
       transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+      background: #fff; /* (canvas is inside) */
     }
-
     .pointer {
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-bottom: 30px solid #ff4d6d;
+      position: absolute; top: -24px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-bottom: 36px solid #ff295a;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+      z-index: 2;
     }
-
     .btn {
-      margin-top: 24px;
-      padding: 12px 20px;
-      font-size: 16px;
-      border: none;
-      background: #ff4d6d;
-      color: white;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
+      margin-top: 18px; padding: 12px 20px; font-size: 16px;
+      border: none; background: #ff295a; color: #fff; border-radius: 12px; cursor: pointer;
+      box-shadow: 0 6px 14px rgba(255,41,90,0.35); transition: transform .08s ease;
     }
-
-    .btn:hover { background: #e63e5c; }
-
-    .result {
-      margin-top: 20px;
-      font-size: 20px;
-      color: #333;
-      font-weight: bold;
-    }
+    .btn:active { transform: translateY(1px); }
+    .result { margin-top: 14px; font-size: 18px; font-weight: 700; color: #333; }
+    @media (max-width: 420px) { :root { --size: 320px; } }
   </style>
 </head>
 <body>
   <h2>🎡 Spin of Love</h2>
-  <div class="wheel-container">
-    <div class="pointer"></div>
-    <canvas id="wheel" class="wheel" width="320" height="320"></canvas>
+
+  <div class="wheel-wrap">
+    <div class="pointer" aria-hidden="true"></div>
+    <div class="wheel">
+      <canvas id="wheel" width="720" height="720" aria-label="Lucky wheel"></canvas>
+    </div>
   </div>
-  <button class="btn" id="spinBtn">Spin 💞</button>
-  <div class="result" id="result"></div>
+
+  <button id="spinBtn" class="btn">Spin 💞</button>
+  <div id="result" class="result" aria-live="polite"></div>
 
   <script>
+    // --------- CONFIG ---------
+    const options = [
+      "Hug 🤗",
+      "Hold hands 🤝",             // keep it respectful/age-appropriate
+      "Sit together — 1 period ⏳",
+      "One photo 📸",
+      "Study together 📖",
+      "Click a photo with me ❤️"
+    ];
+    const colors = ["#ff6f91","#ff9671","#ffc75f","#f9f871","#a1de93","#93c6e0"];
+
+    // --------- CANVAS DRAW ---------
     const canvas = document.getElementById("wheel");
     const ctx = canvas.getContext("2d");
+    const size = canvas.width;             // 720
+    const cx = size / 2, cy = size / 2;    // center
+    const radius = size * 0.48;
+    const sliceAngle = (2 * Math.PI) / options.length;
 
-    const options = [
-      "Hug 🤗", 
-      "Keep hands on thigh ✋", 
-      "1 period sitting together ⏳", 
-      "1 photo 📸", 
-      "Study together 📖", 
-      "Click one photo with me ❤️"
-    ];
-    
-    const colors = ["#ff6f91", "#ff9671", "#ffc75f", "#f9f871", "#a1de93", "#93c6e0"];
-    const sliceAngle = 2 * Math.PI / options.length;
-
-    // Draw wheel
-    function drawWheel() {
-      for (let i = 0; i < options.length; i++) {
-        ctx.beginPath();
-        ctx.moveTo(160, 160);
-        ctx.arc(160, 160, 160, i * sliceAngle, (i + 1) * sliceAngle);
-        ctx.fillStyle = colors[i];
-        ctx.fill();
-        ctx.save();
-
-        // Add text
-        ctx.translate(160, 160);
-        ctx.rotate(i * sliceAngle + sliceAngle / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#333";
-        ctx.font = "14px Poppins";
-        ctx.fillText(options[i], 140, 10);
-        ctx.restore();
+    // helper: wrap text into lines
+    function wrapLines(text, maxWidth, font) {
+      ctx.font = font;
+      const words = text.split(" ");
+      const lines = [];
+      let line = "";
+      for (let w of words) {
+        const test = line ? line + " " + w : w;
+        if (ctx.measureText(test).width <= maxWidth) {
+          line = test;
+        } else {
+          if (line) lines.push(line);
+          line = w;
+        }
       }
+      if (line) lines.push(line);
+      // limit to max 2 lines; if 3+, merge last ones
+      if (lines.length > 2) {
+        const merged = lines.slice(0,1);
+        merged.push(lines.slice(1).join(" "));
+        return merged;
+      }
+      return lines;
+    }
+
+    function drawWheel() {
+      ctx.clearRect(0,0,size,size);
+      for (let i = 0; i < options.length; i++) {
+        const start = i * sliceAngle;
+        const end   = start + sliceAngle;
+
+        // slice
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, start, end);
+        ctx.closePath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+
+        // label (centered, horizontal, high-contrast)
+        const mid = start + sliceAngle / 2;
+        const tx = cx + Math.cos(mid) * radius * 0.62;
+        const ty = cy + Math.sin(mid) * radius * 0.62;
+
+        // auto-fit font
+        let fontSize = 34; // big for 720px canvas
+        let font = `700 ${fontSize}px Poppins, system-ui, Arial`;
+        let lines = wrapLines(options[i], radius * 0.85 / 2, font); // half-width per line
+
+        // shrink until widest line fits
+        const maxWidth = radius * 0.85;
+        while (fontSize > 14) {
+          ctx.font = font = `700 ${fontSize}px Poppins, system-ui, Arial`;
+          const tooWide = lines.some(l => ctx.measureText(l).width > maxWidth);
+          if (!tooWide) break;
+          fontSize -= 2;
+          lines = wrapLines(options[i], maxWidth / 2, font);
+        }
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // outline for readability
+        ctx.lineWidth = Math.max(4, Math.round(fontSize/6));
+        ctx.strokeStyle = "rgba(0,0,0,0.65)";
+        ctx.fillStyle = "#fff";
+
+        const lineHeight = fontSize * 1.1;
+        const totalH = lineHeight * lines.length;
+        lines.forEach((line, idx) => {
+          const y = ty + (idx - (lines.length-1)/2) * lineHeight;
+          ctx.strokeText(line, tx, y);
+          ctx.fillText(line, tx, y);
+        });
+      }
+
+      // center hub (just for style)
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius*0.14, 0, Math.PI*2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "rgba(0,0,0,0.15)";
+      ctx.stroke();
     }
     drawWheel();
 
+    // --------- SPIN LOGIC (accurate result) ---------
+    const wheelDiv = document.querySelector(".wheel");
+    const resultEl = document.getElementById("result");
+    const spinBtn  = document.getElementById("spinBtn");
+
+    const degPerSlice = 360 / options.length;
     let currentRotation = 0;
-    const spinBtn = document.getElementById("spinBtn");
-    const result = document.getElementById("result");
+    let pendingIndex = 0;
+    let spinning = false;
 
-    spinBtn.addEventListener("click", () => {
-      const spinAngle = Math.floor(Math.random() * 360) + 720; // random spin + extra rounds
-      currentRotation += spinAngle;
+    function spin() {
+      if (spinning) return;
+      spinning = true;
+      resultEl.textContent = "";
 
-      // Apply rotation
-      canvas.style.transform = `rotate(${currentRotation}deg)`;
+      // choose the result first (guarantees match)
+      pendingIndex = Math.floor(Math.random() * options.length);
 
-      // Find result
-      setTimeout(() => {
-        const actualDeg = currentRotation % 360;
-        const index = Math.floor((360 - actualDeg) / (360 / options.length)) % options.length;
-        result.textContent = "💖 Result: " + options[index];
-      }, 4000); // match transition time
+      // angle whose slice-center should land at top (pointer is at 90°)
+      const targetCenterDeg = pendingIndex * degPerSlice + degPerSlice / 2;
+      let desiredAtTop = 90 - targetCenterDeg; // rotate so this center goes to 90°
+      // normalize
+      desiredAtTop = ((desiredAtTop % 360) + 360) % 360;
+
+      const currentMod = ((currentRotation % 360) + 360) % 360;
+      let delta = desiredAtTop - currentMod;
+      if (delta < 0) delta += 360;
+
+      const fullTurns = 4 + Math.floor(Math.random() * 3); // 4–6 spins
+      const totalDelta = fullTurns * 360 + delta;
+
+      currentRotation += totalDelta;
+      wheelDiv.style.transform = `rotate(${currentRotation}deg)`;
+    }
+
+    wheelDiv.addEventListener("transitionend", () => {
+      resultEl.textContent = "💖 Result: " + options[pendingIndex];
+      spinning = false;
     });
+
+    spinBtn.addEventListener("click", spin);
   </script>
 </body>
 </html>
