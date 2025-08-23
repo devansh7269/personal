@@ -1,137 +1,225 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lucky Wheel 🎡</title>
   <style>
     body {
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
-      background: linear-gradient(135deg, #ffdde1, #ff99ac);
-      font-family: Arial, sans-serif;
       margin: 0;
+      background: #ffe6f0;
+      font-family: 'Arial', sans-serif;
     }
-    h1 {
+    h2 {
       margin-bottom: 20px;
       font-size: 28px;
-      color: #d6336c;
-      text-shadow: 1px 1px #fff;
+      color: #d63384;
     }
     canvas {
       border: 8px solid #ff4d6d;
       border-radius: 50%;
-      background: white;
+      background: #fff0f6;
     }
-    #spin {
+    button {
       margin-top: 20px;
-      padding: 12px 25px;
+      padding: 10px 20px;
       font-size: 18px;
-      border: none;
-      border-radius: 10px;
       background: #ff4d6d;
       color: white;
+      border: none;
+      border-radius: 12px;
       cursor: pointer;
-      transition: 0.2s;
+      transition: 0.3s;
     }
-    #spin:hover {
-      background: #e63956;
-      transform: scale(1.05);
+    button:hover {
+      background: #d63384;
     }
-    #result {
-      margin-top: 20px;
+    #resultCard {
+      margin-top: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 77, 109, 0.4);
+      text-align: center;
+      width: 280px;
+      display: none;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    #resultText {
       font-size: 22px;
       font-weight: bold;
-      color: #333;
+      color: #ff4d6d;
+      text-shadow: 0 0 8px #ff99ac;
+      margin-bottom: 15px;
+    }
+    #downloadBtn {
+      padding: 8px 14px;
+      font-size: 16px;
+      background: #ff6f91;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #downloadBtn:hover {
+      background: #d63384;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.8);}
+      to {opacity: 1; transform: scale(1);}
     }
   </style>
 </head>
 <body>
-  <h1>🎡 Lucky Wheel of Love</h1>
-  <canvas id="wheel" width="400" height="400"></canvas>
-  <button id="spin">Spin</button>
-  <div id="result"></div>
+  <h2>Spin the Lucky Wheel 🎡</h2>
+  <canvas id="wheelCanvas" width="400" height="400"></canvas>
+  <button onclick="spinWheel()">Spin</button>
 
+  <!-- Result Card -->
+  <div id="resultCard">
+    <div id="resultText"></div>
+    <button id="downloadBtn" onclick="downloadCard()">Download 💾</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     const options = [
       "Hug 🤗",
       "Keep hands on thigh ✋",
-      "1 Period sitting together ⏳",
-      "1 Photo 📸",
-      "Study together 📚",
+      "1 period sitting together ⏳",
+      "1 photo 📸",
+      "Study together 📖",
       "Click one photo with me ❤️"
     ];
 
-    const canvas = document.getElementById("wheel");
-    const ctx = canvas.getContext("2d");
-    const arc = (2 * Math.PI) / options.length;
-    let startAngle = 0;
-    let spinAngle = 0;
-    let spinVelocity = 0;
-    let spinning = false;
+    const colors = ["#ff4d6d","#ff6f91","#ff85a2","#ff99ac","#ffb3c6","#ffccd5"];
 
-    function drawWheel() {
-      ctx.clearRect(0, 0, 400, 400);
-      for (let i = 0; i < options.length; i++) {
-        const angle = startAngle + i * arc;
+    let canvas = document.getElementById("wheelCanvas");
+    let ctx = canvas.getContext("2d");
+    let startAngle = 0;
+    let arc = Math.PI / (options.length / 2);
+    let spinTimeout = null;
+    let spinAngleStart = 0;
+    let spinTime = 0;
+    let spinTimeTotal = 0;
+
+    function drawRouletteWheel() {
+      ctx.clearRect(0,0,400,400);
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+      ctx.font = "16px Arial";
+      for(let i = 0; i < options.length; i++) {
+        let angle = startAngle + i * arc;
+        ctx.fillStyle = colors[i % colors.length];
         ctx.beginPath();
-        ctx.fillStyle = i % 2 === 0 ? "#ff6f91" : "#ff99ac";
-        ctx.moveTo(200, 200);
-        ctx.arc(200, 200, 200, angle, angle + arc);
-        ctx.lineTo(200, 200);
+        ctx.arc(200, 200, 200, angle, angle + arc, false);
+        ctx.arc(200, 200, 0, angle + arc, angle, true);
         ctx.fill();
         ctx.save();
-
-        // text
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 16px Arial";
-        ctx.translate(
-          200 + Math.cos(angle + arc / 2) * 120,
-          200 + Math.sin(angle + arc / 2) * 120
-        );
-        ctx.rotate(angle + arc / 2);
-        ctx.fillText(options[i], -ctx.measureText(options[i]).width / 2, 0);
+        ctx.fillStyle = "white";
+        ctx.translate(200 + Math.cos(angle + arc/2) * 120,
+                      200 + Math.sin(angle + arc/2) * 120);
+        ctx.rotate(angle + arc/2);
+        ctx.fillText(options[i], -ctx.measureText(options[i]).width/2, 0);
         ctx.restore();
       }
-
       // Arrow
-      ctx.fillStyle = "#d6336c";
+      ctx.fillStyle = "#d63384";
       ctx.beginPath();
-      ctx.moveTo(200 - 15, 0);
-      ctx.lineTo(200 + 15, 0);
-      ctx.lineTo(200, 30);
+      ctx.moveTo(200 - 10, 0);
+      ctx.lineTo(200 + 10, 0);
+      ctx.lineTo(200, 40);
       ctx.closePath();
       ctx.fill();
     }
 
-    function animate() {
-      if (!spinning) return;
-      startAngle += spinVelocity;
-      spinVelocity *= 0.985; // friction
-      if (spinVelocity < 0.002) {
-        spinning = false;
-        const degrees = (startAngle * 180) / Math.PI + 90;
-        const index =
-          Math.floor((360 - (degrees % 360)) / (360 / options.length)) %
-          options.length;
-        document.getElementById("result").innerText =
-          "👉 Result: " + options[index];
+    function rotateWheel() {
+      spinTime += 30;
+      if(spinTime >= spinTimeTotal) {
+        stopRotateWheel();
+        return;
       }
-      drawWheel();
-      requestAnimationFrame(animate);
+      let spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+      startAngle += (spinAngle * Math.PI / 180);
+      drawRouletteWheel();
+      spinTimeout = setTimeout(rotateWheel, 30);
     }
 
-    document.getElementById("spin").addEventListener("click", () => {
-      if (spinning) return;
-      spinning = true;
-      spinVelocity = (Math.random() * 0.3) + 0.25; // random speed
-      animate();
-    });
+    function stopRotateWheel() {
+      clearTimeout(spinTimeout);
+      let degrees = startAngle * 180 / Math.PI + 90;
+      let arcd = arc * 180 / Math.PI;
+      let index = Math.floor((360 - (degrees % 360)) / arcd);
+      ctx.save();
+      let resultText = options[index];
+      ctx.restore();
+      
+      // Show card
+      const resultCard = document.getElementById("resultCard");
+      const resultDiv = document.getElementById("resultText");
+      resultDiv.textContent = "💖 Result: " + resultText;
+      resultCard.style.display = "block";
 
-    drawWheel();
+      // Confetti
+      launchConfetti();
+    }
+
+    function easeOut(t, b, c, d) {
+      const ts = (t/=d)*t;
+      const tc = ts*t;
+      return b+c*(tc + -3*ts + 3*t);
+    }
+
+    function spinWheel() {
+      document.getElementById("resultCard").style.display = "none";
+      spinAngleStart = Math.random() * 10 + 10;
+      spinTime = 0;
+      spinTimeTotal = Math.random() * 3000 + 4000;
+      rotateWheel();
+    }
+
+    // Confetti effect
+    function launchConfetti() {
+      for (let i = 0; i < 80; i++) {
+        const confetti = document.createElement("div");
+        confetti.style.position = "fixed";
+        confetti.style.width = "8px";
+        confetti.style.height = "14px";
+        confetti.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+        confetti.style.top = "-10px";
+        confetti.style.left = Math.random()*100 + "vw";
+        confetti.style.opacity = Math.random();
+        confetti.style.transform = "rotate(" + Math.random()*360 + "deg)";
+        document.body.appendChild(confetti);
+
+        let fall = setInterval(() => {
+          let top = parseFloat(confetti.style.top);
+          if (top > window.innerHeight) {
+            confetti.remove();
+            clearInterval(fall);
+          } else {
+            confetti.style.top = top + 5 + "px";
+          }
+        }, 30);
+      }
+    }
+
+    // Download Card
+    function downloadCard() {
+      html2canvas(document.querySelector("#resultCard")).then(canvas => {
+        let link = document.createElement("a");
+        link.download = "LuckyWheel_Result.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    drawRouletteWheel();
   </script>
 </body>
 </html>
