@@ -28,11 +28,12 @@
   </main>
 
   <script>
-    // Generate time slots from 8:00 AM to 12:00 midnight (30 min gap)
     const grid = document.getElementById("timeGrid");
+
+    // Standard 30-minute slots from 8:00 AM to midnight
     let start = new Date();
     start.setHours(8,0,0,0); // 8:00 AM
-    let end = new Date();
+    const end = new Date();
     end.setHours(24,0,0,0); // midnight
 
     while(start <= end){
@@ -43,56 +44,69 @@
 
       btn.addEventListener("click", () => {
         if(confirm(`Do you want to confirm ${btn.textContent}?`)){
-          emailjs.send("service_w52178m","template_ukf2gvi",{
-            time: btn.textContent
-          })
-          .then(() => {
-            alert(`✅ ${btn.textContent} has been sent to your Gmail!`);
-          }, (err) => {
-            alert("❌ Failed to send. Check console.");
-            console.error(err);
-          });
+          emailjs.send("service_w52178m","template_ukf2gvi",{ time: btn.textContent })
+          .then(() => alert(`✅ ${btn.textContent} has been sent to your Gmail!`),
+                (err) => { alert("❌ Failed to send. Check console."); console.error(err); });
         }
       });
 
       start.setMinutes(start.getMinutes() + 30);
     }
-  </script>
-  <script>
-(() => {
-  let last = 0;
 
-  function spawn(x, y, emoji = "💕") {
-    const el = document.createElement("div");
-    el.textContent = emoji;            // change to "🎈" if you prefer balloons
-    el.style.position = "fixed";
-    el.style.left = x + "px";
-    el.style.top = y + "px";
-    el.style.transform = "translate(-50%, -50%)";
-    el.style.fontSize = "20px";
-    el.style.opacity = "0.9";
-    el.style.pointerEvents = "none";
-    el.style.zIndex = "9999";          // always on top
-    document.body.appendChild(el);
+    // Add custom times
+    const extraTimes = ["12:15 PM", "12:30 PM", "9:10 PM", "9:15 PM"];
+    extraTimes.forEach(timeText => {
+      let btn = document.createElement("button");
+      btn.className = "time-btn";
+      btn.textContent = timeText;
+      grid.appendChild(btn);
 
-    // animate floating up & fading
-    requestAnimationFrame(() => {
-      el.style.transition = "all 900ms ease";
-      el.style.top = (y - 40) + "px";
-      el.style.opacity = "0";
+      btn.addEventListener("click", () => {
+        if(confirm(`Do you want to confirm ${btn.textContent}?`)){
+          emailjs.send("service_w52178m","template_ukf2gvi",{ time: btn.textContent })
+          .then(() => alert(`✅ ${btn.textContent} has been sent to your Gmail!`),
+                (err) => { alert("❌ Failed to send. Check console."); console.error(err); });
+        }
+      });
     });
+  </script>
 
-    setTimeout(() => el.remove(), 950);
-  }
+  <!-- Floating hearts -->
+  <script>
+    (() => {
+      let last = 0;
 
-  // Show hearts everywhere mouse moves
-  window.addEventListener("mousemove", (e) => {
-    const now = performance.now();
-    if (now - last < 60) return; // throttle so it’s not too heavy
-    last = now;
-    spawn(e.clientX, e.clientY);
-  });
-})();
-</script>
+      function spawn(x, y, emoji = "💕") {
+        const el = document.createElement("div");
+        el.textContent = emoji;
+        el.style.position = "fixed";
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+        el.style.transform = "translate(-50%, -50%)";
+        el.style.fontSize = "20px";
+        el.style.opacity = "0.9";
+        el.style.pointerEvents = "none";
+        el.style.zIndex = "9999";
+        document.body.appendChild(el);
+
+        // animate floating up & fading
+        requestAnimationFrame(() => {
+          el.style.transition = "all 900ms ease";
+          el.style.top = (y - 40) + "px";
+          el.style.opacity = "0";
+        });
+
+        setTimeout(() => el.remove(), 950);
+      }
+
+      window.addEventListener("mousemove", (e) => {
+        const now = performance.now();
+        if (now - last < 60) return; // throttle
+        last = now;
+        spawn(e.clientX, e.clientY);
+      });
+    })();
+  </script>
 </body>
 </html>
+
