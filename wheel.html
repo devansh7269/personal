@@ -11,7 +11,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: #ffdde1;
+      background: linear-gradient(135deg, #ffdde1, #ff99ac);
       font-family: Arial, sans-serif;
       margin: 0;
     }
@@ -19,6 +19,7 @@
       margin-bottom: 20px;
       font-size: 28px;
       color: #d6336c;
+      text-shadow: 1px 1px #fff;
     }
     canvas {
       border: 8px solid #ff4d6d;
@@ -34,9 +35,11 @@
       background: #ff4d6d;
       color: white;
       cursor: pointer;
+      transition: 0.2s;
     }
     #spin:hover {
       background: #e63956;
+      transform: scale(1.05);
     }
     #result {
       margin-top: 20px;
@@ -66,23 +69,23 @@
     const ctx = canvas.getContext("2d");
     const arc = (2 * Math.PI) / options.length;
     let startAngle = 0;
-    let spinTimeout = null;
     let spinAngle = 0;
-    let spinAngleDelta = 0;
+    let spinVelocity = 0;
     let spinning = false;
 
     function drawWheel() {
+      ctx.clearRect(0, 0, 400, 400);
       for (let i = 0; i < options.length; i++) {
         const angle = startAngle + i * arc;
         ctx.beginPath();
-        ctx.fillStyle = i % 2 === 0 ? "#ff99ac" : "#ff6f91";
+        ctx.fillStyle = i % 2 === 0 ? "#ff6f91" : "#ff99ac";
         ctx.moveTo(200, 200);
         ctx.arc(200, 200, 200, angle, angle + arc);
         ctx.lineTo(200, 200);
         ctx.fill();
         ctx.save();
 
-        // Text
+        // text
         ctx.fillStyle = "#fff";
         ctx.font = "bold 16px Arial";
         ctx.translate(
@@ -100,16 +103,15 @@
       ctx.moveTo(200 - 15, 0);
       ctx.lineTo(200 + 15, 0);
       ctx.lineTo(200, 30);
+      ctx.closePath();
       ctx.fill();
     }
 
-    function rotateWheel() {
-      spinAngle *= 0.97; // friction
-      if (spinAngle > 0.1) {
-        startAngle += (spinAngle * Math.PI) / 180;
-        drawWheel();
-        spinTimeout = requestAnimationFrame(rotateWheel);
-      } else {
+    function animate() {
+      if (!spinning) return;
+      startAngle += spinVelocity;
+      spinVelocity *= 0.985; // friction
+      if (spinVelocity < 0.002) {
         spinning = false;
         const degrees = (startAngle * 180) / Math.PI + 90;
         const index =
@@ -118,13 +120,15 @@
         document.getElementById("result").innerText =
           "👉 Result: " + options[index];
       }
+      drawWheel();
+      requestAnimationFrame(animate);
     }
 
     document.getElementById("spin").addEventListener("click", () => {
       if (spinning) return;
       spinning = true;
-      spinAngle = Math.random() * 900 + 500;
-      rotateWheel();
+      spinVelocity = (Math.random() * 0.3) + 0.25; // random speed
+      animate();
     });
 
     drawWheel();
