@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Truth or Dare 💕</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .wheel-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .wheel {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 8px solid var(--pink-accent);
+      position: relative;
+      overflow: hidden;
+      transform: rotate(0deg);
+      transition: transform 4s ease-out;
+    }
+    .segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      transform-origin: 100% 100%;
+      clip-path: polygon(0 0, 100% 0, 100% 100%);
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+    .arrow {
+      margin-top: 20px;
+      font-size: 28px;
+    }
+  </style>
+</head>
+<body>
+  <div class="background" id="bg"></div>
+  <main class="centered">
+    <section class="card content">
+      <h2>🎡 Truth or Dare Spinner</h2>
+      <div class="wheel-container">
+        <div class="wheel" id="wheel">
+          <div class="segment" style="transform: rotate(0deg) skewY(-60deg); background:#ff5d95;">Truth 💕</div>
+          <div class="segment" style="transform: rotate(60deg) skewY(-60deg); background:#ff88b0;">Dare 😘</div>
+          <div class="segment" style="transform: rotate(120deg) skewY(-60deg); background:#ffb3c6;">Truth 💖</div>
+          <div class="segment" style="transform: rotate(180deg) skewY(-60deg); background:#ff6fa0;">Dare 💋</div>
+          <div class="segment" style="transform: rotate(240deg) skewY(-60deg); background:#ff85a2;">Truth 🌸</div>
+          <div class="segment" style="transform: rotate(300deg) skewY(-60deg); background:#ff99ac;">Dare 💞</div>
+        </div>
+        <div class="arrow">⬆️</div>
+        <button class="btn" onclick="spinWheel()">Spin</button>
+        <p id="result" style="margin-top:12px;font-weight:bold;"></p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let currentRotation = 0;
+    function spinWheel() {
+      const wheel = document.getElementById("wheel");
+      const result = document.getElementById("result");
+
+      const spin = Math.floor(2000 + Math.random() * 2000);
+      currentRotation += spin;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(() => {
+        const actualDeg = currentRotation % 360;
+        if (actualDeg >= 0 && actualDeg < 60) result.innerText = "Truth 💕: Tell me one secret about you!";
+        else if (actualDeg >= 60 && actualDeg < 120) result.innerText = "Dare 😘: Send me a kiss emoji!";
+        else if (actualDeg >= 120 && actualDeg < 180) result.innerText = "Truth 💖: What do you like most about me?";
+        else if (actualDeg >= 180 && actualDeg < 240) result.innerText = "Dare 💋: Give me a virtual hug!";
+        else if (actualDeg >= 240 && actualDeg < 300) result.innerText = "Truth 🌸: What’s your happiest memory with me?";
+        else result.innerText = "Dare 💞: Say 'I love you' three times 💕";
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
