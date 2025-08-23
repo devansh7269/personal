@@ -1,112 +1,182 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catch the Hearts ❤️</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catch the Hearts 💖</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #ff9a9e, #fecfef);
-      overflow: hidden;
       height: 100vh;
+      background: linear-gradient(to top right, #ffdde1, #ee9ca7);
+      overflow: hidden;
+      font-family: "Segoe UI", sans-serif;
       display: flex;
-      justify-content: center;
       align-items: center;
-      font-family: "Poppins", sans-serif;
+      justify-content: center;
     }
 
+    /* Lock screen */
+    .lock-screen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255, 221, 225, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff4d6d;
+      z-index: 10;
+      text-align: center;
+      padding: 20px;
+    }
+    .lock-screen input {
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 12px;
+      outline: none;
+      text-align: center;
+    }
+    .lock-screen button {
+      margin-top: 12px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #ff4d6d;
+      color: white;
+      cursor: pointer;
+    }
+    .error {
+      margin-top: 10px;
+      color: red;
+      font-size: 16px;
+    }
+    .hint {
+      margin-top: 8px;
+      font-size: 16px;
+      color: #444;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .hint-text {
+      margin-top: 5px;
+      font-size: 18px;
+      color: #d6336c;
+      font-style: italic;
+      display: none;
+    }
+
+    /* Falling hearts */
     .heart {
       position: absolute;
-      font-size: 32px;
+      font-size: 28px;
+      animation: fall linear forwards;
       cursor: pointer;
       user-select: none;
-      animation: fall linear;
     }
-
     @keyframes fall {
-      from { transform: translateY(-10%); }
-      to { transform: translateY(110vh); }
+      0% { transform: translateY(-10vh); opacity: 1; }
+      100% { transform: translateY(110vh); opacity: 0; }
     }
 
-    #messageBox {
-      position: fixed;
-      top: 50%;
+    /* Compliment message */
+    .compliment-message {
+      position: absolute;
+      bottom: 20px;
       left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.9);
-      padding: 20px 30px;
-      border-radius: 15px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #d6336c;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(214, 51, 108, 0.3);
-      display: none;
-      z-index: 1000;
-      animation: fadeIn 0.5s ease;
+      transform: translateX(-50%);
+      background: rgba(255, 77, 109, 0.9);
+      color: white;
+      font-size: 20px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      animation: fadeOut 6s forwards;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -60%); }
-      to   { opacity: 1; transform: translate(-50%, -50%); }
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <div id="messageBox"></div>
 
-  <script>
-    const compliments = [
-      "aadat se ho gayi hai har waqt tere baare mein sochne ki 💖",
-      "Stay loyal with me and I will prove that not every one leaves 💖",
-      "Forever mine 💍",
-      "sisha kya batyega khubsurati tumhari waqt ho tho dek lena aakwhin hamaari",
-      "jab mein mangu koi mahenga toofa tho tum dher sara waqt lekar aana 🌸",
-      "You make my world glow ✨",
-      "Sweetest soul 💕",
-      "Always in my heart ❤️",
-      "My princess 👑",
-      "teach me how to love u because i wanna love u the way u wanted to be loved 💖"
-    ];
+<!-- Lock screen -->
+<div class="lock-screen" id="lockScreen">
+  💕 To unlock, answer this question 💕  
+  <p>If I want to describe u from a shot of Virat, then which shot will it be?? 🌸</p>
+  <input type="text" id="answerInput" placeholder="Type your answer here" />
+  <button onclick="checkAnswer()">Unlock</button>
+  <div class="hint" onclick="showHint()">Need a hint? 🤔</div>
+  <div class="hint-text" id="hintText">Virat’s signature shot 😉</div>
+  <div class="error" id="errorMsg"></div>
+</div>
 
-    function createHeart() {
-      const heart = document.createElement("div");
-      heart.classList.add("heart");
-      heart.innerHTML = "❤️";
+<script>
+  const compliments = [
+    "aadat se ho gayi hai har waqt tere baare mein sochne ki 💖",
+    "Stay loyal with me and I will prove that not every one leaves 💖",
+    "Forever mine 💍",
+    "sisha kya batyega khubsurati tumhari waqt ho tho dek lena aakwhin hamaari",
+    "jab mein mangu koi mahenga toofa tho tum dher sara waqt lekar aana 🌸",
+    "You make my world glow ✨",
+    "Sweetest soul 💕",
+    "Always in my heart ❤️",
+    "My princess 👑",
+    "teach me how to love u because i wanna love u the way u wanted to be loved 💖"
+  ];
 
-      heart.style.left = Math.random() * 95 + "vw";
-      heart.style.top = "-40px";
-      heart.style.animationDuration = (3 + Math.random() * 3) + "s";
+  let heartInterval;
 
-      heart.addEventListener("click", () => {
-        showMessage();
-        heart.remove(); // remove clicked heart
-      });
+  function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = "💖";
+    heart.style.left = Math.random() * 90 + "vw";
+    heart.style.animationDuration = (5 + Math.random() * 4) + "s";
 
-      document.body.appendChild(heart);
+    // click event
+    heart.addEventListener("click", () => {
+      showCompliment();
+      heart.remove();
+    });
 
-      // Remove heart when it falls out of screen
-      setTimeout(() => {
-        heart.remove();
-      }, 6000);
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 9000);
+  }
+
+  function showCompliment() {
+    const msg = document.createElement("div");
+    msg.className = "compliment-message";
+    msg.textContent = compliments[Math.floor(Math.random() * compliments.length)];
+    document.body.appendChild(msg);
+
+    setTimeout(() => msg.remove(), 6000); // 6 seconds
+  }
+
+  function checkAnswer() {
+    const input = document.getElementById("answerInput").value.trim().toLowerCase();
+    const error = document.getElementById("errorMsg");
+
+    if (input === "cover drive") {
+      document.getElementById("lockScreen").style.display = "none";
+      heartInterval = setInterval(createHeart, 1200);
+    } else {
+      error.textContent = "Wrong answer 😢 Try again!";
     }
+  }
 
-    function showMessage() {
-      const box = document.getElementById("messageBox");
-      const randomMessage = compliments[Math.floor(Math.random() * compliments.length)];
-      box.textContent = randomMessage;
-      box.style.display = "block";
+  function showHint() {
+    document.getElementById("hintText").style.display = "block";
+  }
+</script>
 
-      // Hide after 5 sec
-      setTimeout(() => {
-        box.style.display = "none";
-      }, 5000);
-    }
-
-    // Generate hearts every 1s
-    setInterval(createHeart, 1000);
-  </script>
 </body>
 </html>
