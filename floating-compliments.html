@@ -91,6 +91,49 @@
       font-style: italic;
       display: none;
     }
+
+    /* Game Section */
+    #gameArea {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 20;
+      color: white;
+      font-size: 24px;
+    }
+    .heart {
+      position: absolute;
+      font-size: 30px;
+      cursor: pointer;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      from { top: -50px; }
+      to { top: 100vh; }
+    }
+    .hiddenMessage {
+      margin-top: 20px;
+      font-size: 26px;
+      font-weight: bold;
+      color: #ffdde1;
+      text-shadow: 0 0 10px #ff4d6d;
+      display: none;
+    }
+    .start-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      background: #ff4d6d;
+      color: white;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -104,6 +147,13 @@
   <div class="hint" onclick="showHint()">Need a hint? 🤔</div>
   <div class="hint-text" id="hintText">Virat’s signature shot 😉</div>
   <div class="error" id="errorMsg"></div>
+</div>
+
+<!-- Game Area -->
+<div id="gameArea">
+  <div id="scoreBoard">Catch 10 hearts to unlock 💖 Score: 0</div>
+  <button class="start-btn" onclick="startGame()">Start Game</button>
+  <div class="hiddenMessage" id="hiddenMessage">🎉 You won my heart 💖 Forever yours! 🎉</div>
 </div>
 
 <script>
@@ -121,6 +171,8 @@
   ];
 
   let complimentsInterval;
+  let score = 0;
+  let gameInterval;
 
   function createCompliment() {
     const div = document.createElement("div");
@@ -139,6 +191,9 @@
     if (input === "cover drive") {
       document.getElementById("lockScreen").style.display = "none";
       complimentsInterval = setInterval(createCompliment, 2500);
+
+      // Show Game Button
+      document.getElementById("gameArea").style.display = "flex";
     } else {
       error.textContent = "Wrong answer 😢 Try again!";
     }
@@ -147,7 +202,39 @@
   function showHint() {
     document.getElementById("hintText").style.display = "block";
   }
+
+  // Catch the Hearts Game
+  function startGame() {
+    score = 0;
+    document.getElementById("hiddenMessage").style.display = "none";
+    document.getElementById("scoreBoard").textContent = "Catch 10 hearts to unlock 💖 Score: " + score;
+
+    if (gameInterval) clearInterval(gameInterval);
+
+    gameInterval = setInterval(() => {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "💖";
+      heart.style.left = Math.random() * 90 + "vw";
+      heart.style.animationDuration = (3 + Math.random() * 2) + "s";
+      document.body.appendChild(heart);
+
+      heart.addEventListener("click", () => {
+        score++;
+        heart.remove();
+        document.getElementById("scoreBoard").textContent = "Catch 10 hearts to unlock 💖 Score: " + score;
+        if (score >= 10) {
+          clearInterval(gameInterval);
+          document.querySelectorAll(".heart").forEach(h => h.remove());
+          document.getElementById("hiddenMessage").style.display = "block";
+        }
+      });
+
+      setTimeout(() => heart.remove(), 5000);
+    }, 800);
+  }
 </script>
 
 </body>
 </html>
+
