@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🎡 Spin of Love</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      margin: 0;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #ff4d6d;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 320px;
+      height: 320px;
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 8px solid white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    .pointer {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 30px solid #ff4d6d;
+    }
+
+    .btn {
+      margin-top: 24px;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      background: #ff4d6d;
+      color: white;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover { background: #e63e5c; }
+
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎡 Spin of Love</h2>
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <canvas id="wheel" class="wheel" width="320" height="320"></canvas>
+  </div>
+  <button class="btn" id="spinBtn">Spin 💞</button>
+  <div class="result" id="result"></div>
+
+  <script>
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+
+    const options = [
+      "Hug 🤗", 
+      "Keep hands on thigh ✋", 
+      "1 period sitting together ⏳", 
+      "1 photo 📸", 
+      "Study together 📖", 
+      "Click one photo with me ❤️"
+    ];
+    
+    const colors = ["#ff6f91", "#ff9671", "#ffc75f", "#f9f871", "#a1de93", "#93c6e0"];
+    const sliceAngle = 2 * Math.PI / options.length;
+
+    // Draw wheel
+    function drawWheel() {
+      for (let i = 0; i < options.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(160, 160);
+        ctx.arc(160, 160, 160, i * sliceAngle, (i + 1) * sliceAngle);
+        ctx.fillStyle = colors[i];
+        ctx.fill();
+        ctx.save();
+
+        // Add text
+        ctx.translate(160, 160);
+        ctx.rotate(i * sliceAngle + sliceAngle / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#333";
+        ctx.font = "14px Poppins";
+        ctx.fillText(options[i], 140, 10);
+        ctx.restore();
+      }
+    }
+    drawWheel();
+
+    let currentRotation = 0;
+    const spinBtn = document.getElementById("spinBtn");
+    const result = document.getElementById("result");
+
+    spinBtn.addEventListener("click", () => {
+      const spinAngle = Math.floor(Math.random() * 360) + 720; // random spin + extra rounds
+      currentRotation += spinAngle;
+
+      // Apply rotation
+      canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+      // Find result
+      setTimeout(() => {
+        const actualDeg = currentRotation % 360;
+        const index = Math.floor((360 - actualDeg) / (360 / options.length)) % options.length;
+        result.textContent = "💖 Result: " + options[index];
+      }, 4000); // match transition time
+    });
+  </script>
+</body>
+</html>
