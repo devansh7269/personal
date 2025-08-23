@@ -111,5 +111,41 @@
       noBtn.style.transform = `translate(${x}px, ${y}px)`;
     });
   </script>
+  <script>
+(() => {
+  let last = 0;
+
+  function spawn(x, y, emoji = "💕") {
+    const el = document.createElement("div");
+    el.textContent = emoji;            // change to "🎈" if you prefer balloons
+    el.style.position = "fixed";
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.style.transform = "translate(-50%, -50%)";
+    el.style.fontSize = "20px";
+    el.style.opacity = "0.9";
+    el.style.pointerEvents = "none";
+    el.style.zIndex = "9999";          // always on top
+    document.body.appendChild(el);
+
+    // animate floating up & fading
+    requestAnimationFrame(() => {
+      el.style.transition = "all 900ms ease";
+      el.style.top = (y - 40) + "px";
+      el.style.opacity = "0";
+    });
+
+    setTimeout(() => el.remove(), 950);
+  }
+
+  // Show hearts everywhere mouse moves
+  window.addEventListener("mousemove", (e) => {
+    const now = performance.now();
+    if (now - last < 60) return; // throttle so it’s not too heavy
+    last = now;
+    spawn(e.clientX, e.clientY);
+  });
+})();
+</script>
 </body>
 </html>
