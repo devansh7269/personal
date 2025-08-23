@@ -1,0 +1,44 @@
+const badges = {
+  heartCollector: { name: "💖 Heart Collector", unlocked: false },
+  secretExplorer: { name: "🕵️ Secret Explorer", unlocked: false },
+  spinnerMaster: { name: "🎡 Spinner Master", unlocked: false },
+  plannerPro: { name: "⏰ Planner Pro", unlocked: false }
+};
+
+function unlockBadge(key) {
+  if(badges[key] && !badges[key].unlocked){
+    badges[key].unlocked = true;
+    localStorage.setItem("badge-" + key, "unlocked"); // save progress
+
+    // show popup
+    const container = document.getElementById("badge-container");
+    const el = document.createElement("div");
+    el.textContent = `🏆 ${badges[key].name} unlocked!`;
+    el.style.background = "#ff88b0";
+    el.style.color = "#fff";
+    el.style.padding = "10px 16px";
+    el.style.borderRadius = "12px";
+    el.style.marginTop = "8px";
+    el.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+    el.style.animation = "slideUp 1s ease forwards";
+    container.appendChild(el);
+
+    // remove after 3 seconds
+    setTimeout(() => el.remove(), 3000);
+  }
+}
+
+// restore badges from localStorage
+Object.keys(badges).forEach(key => {
+  if(localStorage.getItem("badge-" + key)) badges[key].unlocked = true;
+});
+
+// example triggers
+let heartCount = 0;
+window.addEventListener("mousemove", (e) => {
+  heartCount++;
+  if(heartCount === 5) unlockBadge("heartCollector");
+});
+
+// call unlockBadge("spinnerMaster") when spinning wheel
+// call unlockBadge("plannerPro") when user selects a time
