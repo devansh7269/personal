@@ -77,10 +77,11 @@
       setTimeout(() => {
         const actualDeg = currentRotation % 360;
         if (actualDeg >= 0 && actualDeg < 60) result.innerText = "Truth 💕: Tell me one secret about you!";
-        else if (actualDeg >= 60 && actualDeg < 120) result.innerText = "Dare 😘: Send me a kiss emoji!";
+        else if (actualDeg >= 60 && actualDeg < 120) result.innerText = "Dare 😘: Send me a flying kiss!";
         else if (actualDeg >= 120 && actualDeg < 180) result.innerText = "Truth 💖: What do you like most about me?";
-        else if (actualDeg >= 180 && actualDeg < 240) result.innerText = "Dare 💋: Give me a virtual hug!";
+        else if (actualDeg >= 180 && actualDeg < 240) result.innerText = "Dare 💋: Give me a real hug!";
         else if (actualDeg >= 240 && actualDeg < 300) result.innerText = "Truth 🌸: What’s your happiest memory with me?";
+        else if (actualDeg >= 300 && actualDeg < 360) result.innerText = "dare : site waith me next period";
         else result.innerText = "Dare 💞: Say 'I love you' three times 💕";
       }, 4000);
     }
