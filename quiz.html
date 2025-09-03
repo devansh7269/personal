@@ -103,7 +103,7 @@
       q1: ["me", "you", "advika"],
       q2: ["20/6/25","20-6-25","20-06-2025"],
       q3: ["all"],
-      q4: ["rasgulla","rasmalia","madamji"],
+      q4: ["rasgulla","rasmalia","madamji","everything"],
       q5: "any",  // any answer is correct
       q6: ["pav bhaji","my cookie","pavbhaji","cookie"],
       q7: ["pal pal dil ke pass","itna na mujhse tu pyar badha"]
@@ -131,7 +131,7 @@
       let percent = (score / total) * 100;
       let resultMsg = `You got ${score}/${total} (${percent.toFixed(0)}%) ❤️`;
 
-      if (percent >= 90) resultMsg += "<br>🎉 You won an Ice Cream 🍦 and a Kiss 😘";
+      if (percent >= 90) resultMsg += "<br>🎉 You won an Ice Cream 🍦 and a Kiss...??? 😘";
       else if (percent >= 80) resultMsg += "<br>🍦 You won an Ice Cream!";
       else if (percent >= 70) resultMsg += "<br>🍫 You won a Chocolate!";
       else resultMsg += "<br>😢 Try again, Madamji!";
