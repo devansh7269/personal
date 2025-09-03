@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About Me Quiz 💖</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .quiz-container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff3f6;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ff4d6d;
+    }
+    .question {
+      margin-bottom: 16px;
+    }
+    .question label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #ff4d6d;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    button:hover { background: #ff2e54; }
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff4d6d;
+    }
+  </style>
+</head>
+<body>
+  <div class="background" id="bg"></div>
+  <main class="centered">
+    <section class="quiz-container">
+      <h2>💖 About Me Quiz 💖</h2>
+      <form id="quizForm">
+        <div class="question">
+          <label>1) Who is my female bestfriend?</label>
+          <input type="text" name="q1" placeholder="Type answer...">
+        </div>
+        <div class="question">
+          <label>2) When we proposed each other?</label>
+          <input type="text" name="q2" placeholder="dd/mm/yy">
+        </div>
+        <div class="question">
+          <label>3) In which period I liked to look you in class?</label>
+          <input type="text" name="q3" placeholder="Type answer...">
+        </div>
+        <div class="question">
+          <label>4) You are my ??</label>
+          <input type="text" name="q4" placeholder="Type answer...">
+        </div>
+        <div class="question">
+          <label>5) Can we go to watch movie?</label>
+          <input type="text" name="q5" placeholder="Type answer...">
+        </div>
+        <div class="question">
+          <label>6) My fav food?</label>
+          <input type="text" name="q6" placeholder="Type answer...">
+        </div>
+        <div class="question">
+          <label>7) My fav song?</label>
+          <input type="text" name="q7" placeholder="Type answer...">
+        </div>
+        <button type="submit">Submit 💌</button>
+      </form>
+      <div id="result"></div>
+      <div style="margin-top:16px;text-align:center;">
+        <a class="btn" href="index.html">⬅️ Back</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const correctAnswers = {
+      q1: ["me", "you", "advika"],
+      q2: ["20/6/25","20-6-25","20-06-2025"],
+      q3: ["all"],
+      q4: ["rasgulla","rasmalia","madamji"],
+      q5: "any",  // any answer is correct
+      q6: ["pav bhaji","my cookie","pavbhaji","cookie"],
+      q7: ["pal pal dil ke pass","itna na mujhse tu pyar badha"]
+    };
+
+    document.getElementById("quizForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      let score = 0;
+      let total = 7;
+
+      for (let key in correctAnswers) {
+        let userAns = this[key].value.trim().toLowerCase();
+        if (!userAns) continue;
+
+        if (correctAnswers[key] === "any") {
+          score++;
+        } else {
+          const answers = correctAnswers[key].map(a => a.toLowerCase());
+          if (answers.includes(userAns)) {
+            score++;
+          }
+        }
+      }
+
+      let percent = (score / total) * 100;
+      let resultMsg = `You got ${score}/${total} (${percent.toFixed(0)}%) ❤️`;
+
+      if (percent >= 90) resultMsg += "<br>🎉 You won an Ice Cream 🍦 and a Kiss 😘";
+      else if (percent >= 80) resultMsg += "<br>🍦 You won an Ice Cream!";
+      else if (percent >= 70) resultMsg += "<br>🍫 You won a Chocolate!";
+      else resultMsg += "<br>😢 Try again, Madamji!";
+
+      document.getElementById("result").innerHTML = resultMsg;
+    });
+  </script>
+</body>
+</html>
