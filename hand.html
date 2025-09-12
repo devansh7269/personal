@@ -4,30 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Haat Pakdu 💞</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #fff0f5;
-      overflow: hidden;
-    }
-    .card {
-      text-align: center;
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      position: relative;
-    }
-    .main-anim {
-      width: 220px;
-      display: block;
-      margin: 0 auto 15px;
-    }
+    /* Extra styles for buttons */
     .choice-buttons {
       margin-top: 20px;
       display: flex;
@@ -58,30 +37,64 @@
       color: #ff4d6d;
       display: none;
     }
+    .main-anim {
+      width: 220px;
+      display: block;
+      margin: 0 auto 15px;
+    }
   </style>
 </head>
 <body>
-  <main class="card">
-    <!-- Animation -->
-    <img id="mainAnim" src="teasing.gif" alt="cute animation" class="main-anim" />
+  <div class="background" id="bg"></div>
+  <main class="centered">
+    <section class="card content">
+      <!-- Animation -->
+      <img id="mainAnim" src="teasing.gif" alt="cute animation" class="main-anim" />
 
-    <!-- Typing text -->
-    <h2 id="typingText"></h2>
+      <!-- Typing effect -->
+      <h2 id="typingText"></h2>  
 
-    <!-- Buttons -->
-    <div class="choice-buttons">
-      <button class="btn-choice yes-btn" id="yesBtn">Yes 💖</button>
-      <button class="btn-choice no-btn" id="noBtn">No 😢</button>
-    </div>
+      <div class="choice-buttons">
+        <button class="btn-choice yes-btn" id="yesBtn">Yes 💖</button>
+        <button class="btn-choice no-btn" id="noBtn">No 😢</button>
+      </div>
 
-    <!-- Hidden message -->
-    <p id="surpriseMessage">Yayyyyy, I knew it 💕 i love uuu!!!!!!! 🥰</p>
+      <p id="surpriseMessage">Yayyyyy, I knew it 💕 i love uuu!!!!!!! 🥰</p>
+
+      <div style="margin-top:16px;">
+        <a class="btn" href="index.html">Back to start</a>
+      </div>
+    </section>
   </main>
+
+  <!-- Floating balloons & hearts -->
+  <script>
+    const bg = document.getElementById('bg');
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+    function createFloating(kind) {
+      const el = document.createElement('div');
+      el.classList.add('floating', kind);
+      el.style.left = rand(-5, 100) + 'vw';
+      const duration = rand(8, 18);
+      el.style.animationDuration = duration + 's';
+      el.style.animationDelay = rand(0, 8) + 's';
+      el.style.opacity = rand(0.7, 1).toFixed(2);
+      const size = kind === 'heart' ? rand(14, 28) : rand(20, 42);
+      el.style.width = size + 'px';
+      el.style.height = (kind === 'heart' ? size : size * 1.3) + 'px';
+      bg.appendChild(el);
+      el.addEventListener('animationend', () => { el.remove(); createFloating(kind); });
+    }
+    for (let i = 0; i < 20; i++) createFloating('balloon');
+    for (let i = 0; i < 24; i++) createFloating('heart');
+  </script>
 
   <!-- Typing effect -->
   <script>
     const text = "Apka haat pakr lu? 💕";
     const el = document.getElementById("typingText");
+    el.classList.add("typing");
+
     let i = 0;
     function type() {
       if (i < text.length) {
@@ -93,27 +106,61 @@
     type();
   </script>
 
-  <!-- Button logic -->
+  <!-- Yes/No button logic -->
   <script>
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const mainAnim = document.getElementById("mainAnim");
 
+    function showSurprise() {
+      document.getElementById("surpriseMessage").style.display = "block";
+    }
+
     noBtn.addEventListener("mouseenter", () => {
-      const x = Math.floor(Math.random() * 200) - 100;
+      const x = Math.floor(Math.random() * 200) - 100; // random shift
       const y = Math.floor(Math.random() * 200) - 100;
       noBtn.style.transform = `translate(${x}px, ${y}px)`;
     });
 
     yesBtn.addEventListener("click", () => {
-      mainAnim.src = "hugging.gif"; // swap to hugging animation
-      document.getElementById("surpriseMessage").style.display = "block";
+      mainAnim.src = "hugging.gif"; // switch to hugging animation
+      showSurprise();
     });
   </script>
+
+  <!-- Hearts on mousemove -->
+  <script>
+(() => {
+  let last = 0;
+  function spawn(x, y, emoji = "💕") {
+    const el = document.createElement("div");
+    el.textContent = emoji;
+    el.style.position = "fixed";
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.style.transform = "translate(-50%, -50%)";
+    el.style.fontSize = "20px";
+    el.style.opacity = "0.9";
+    el.style.pointerEvents = "none";
+    el.style.zIndex = "9999";
+    document.body.appendChild(el);
+
+    requestAnimationFrame(() => {
+      el.style.transition = "all 900ms ease";
+      el.style.top = (y - 40) + "px";
+      el.style.opacity = "0";
+    });
+
+    setTimeout(() => el.remove(), 950);
+  }
+
   window.addEventListener("mousemove", (e) => {
     const now = performance.now();
-    if (now - last < 60) return; // throttle so it’s not too heavy
+    if (now - last < 60) return;
     last = now;
     spawn(e.clientX, e.clientY);
+  });
+})();
+</script>
 </body>
 </html>
