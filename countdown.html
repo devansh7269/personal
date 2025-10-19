@@ -228,12 +228,19 @@
         
         .music-player {
             margin: 20px 0;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
             border-radius: 15px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .music-controls {
+            display: flex;
+            align-items: center;
             gap: 15px;
         }
         
@@ -248,10 +255,63 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 3px 10px rgba(255, 78, 123, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .music-btn:hover {
             transform: scale(1.1);
+        }
+        
+        .music-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .volume-slider {
+            width: 100px;
+        }
+        
+        .song-info {
+            font-size: 1.1rem;
+            color: #5a3d5c;
+            margin-bottom: 10px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 300px;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #ff4e7b;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        
+        .time-display {
+            font-size: 0.9rem;
+            color: #5a3d5c;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
         }
         
         .hearts-container {
@@ -416,6 +476,11 @@
             .btn {
                 width: 80%;
             }
+            
+            .music-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -466,19 +531,53 @@
                 </div>
             </div>
             
+            <!-- Improved Music Player -->
             <div class="music-player">
-                <p><i class="fas fa-music"></i> Our Song: "Perfect" by Ed Sheeran</p>
-                <button class="music-btn" id="playBtn"><i class="fas fa-play"></i></button>
-                <button class="music-btn" id="pauseBtn"><i class="fas fa-pause"></i></button>
+                <div class="song-info">
+                    <i class="fas fa-music"></i> Now Playing: "Birthday Romance" - Your Special Song
+                </div>
+                <div class="music-controls">
+                    <button class="music-btn" id="prevBtn" title="Previous">
+                        <i class="fas fa-backward"></i>
+                    </button>
+                    <button class="music-btn" id="playBtn" title="Play">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="music-btn" id="pauseBtn" title="Pause" style="display: none;">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button class="music-btn" id="nextBtn" title="Next">
+                        <i class="fas fa-forward"></i>
+                    </button>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+                
+                <div class="volume-control">
+                    <i class="fas fa-volume-down"></i>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                
+                <audio id="birthdayAudio" loop>
+                    <!-- We'll use JavaScript to handle multiple audio sources -->
+                </audio>
             </div>
             
             <div class="message-box">
                 <p>My dearest,</p>
-                <p>On this special day, I want you to know how incredibly grateful I am to have you in my life.  Your laughter is my favorite melody, and your love is the greatest gift I've ever received.You are the one made me feel special everytime </p>
-                <p>You're not just my girlfriend; you're my best friend, my greatest adventure and the one whome whome i will want to see with me forever. I loved every moment we spend together and look forward to creating countless more beautiful memories with you.And i will always regret for the time which we could spend togethere but we were unable to because of me. </p>
+                <p>On this special day, I want you to know how incredibly grateful I am to have you in my life. Your smile lights up my world, your laughter is my favorite melody, and your love is the greatest gift I've ever received.</p>
+                <p>You're not just my girlfriend; you're my best friend, my confidante, and my greatest adventure. I cherish every moment we spend together and look forward to creating countless more beautiful memories with you.</p>
                 <p>Today is all about you - may your birthday be as wonderful, beautiful, and amazing as you are!</p>
                 <p>With all my love,</p>
-                <p>Your Rupali </p>
+                <p>Your [Your Name]</p>
             </div>
             
             <div class="interactive-section">
@@ -489,8 +588,8 @@
             
             <div class="memory-box" id="memoryBox">
                 <h3>Remember when...</h3>
-                <p> We kissed for the first time ,waise ye jayda purana baat bhi nahi hai .</p>
-                <p>Every day with you feels like a new adventure, and I fall in love with you more each passing moment, and your eyes....... just like spears </p>
+                <p>We went on our first date and talked for hours without realizing how much time had passed? That was the moment I knew there was something special about you.</p>
+                <p>Every day with you feels like a new adventure, and I fall in love with you more each passing moment.</p>
             </div>
             
             <div class="love-letter" id="loveLetter">
@@ -499,15 +598,13 @@
                 <p>I love the way your eyes light up when you talk about things you're passionate about. I love your kindness, your intelligence, and the way you always know how to make me smile.</p>
                 <p>You are my greatest blessing, and I promise to cherish and love you every single day.</p>
                 <p>Forever yours,</p>
-                <p>Your Rupali </p>
+                <p>[Your Name]</p>
             </div>
         </div>
     </div>
 
     <script>
         // Set the birthday date (Month, Day)
-        // For testing: Set to a few seconds in the future
-        // For production: Set to actual birthday
         const BIRTHDAY_MONTH = 10; // October
         const BIRTHDAY_DAY = 27;   // 27th
         
@@ -517,6 +614,136 @@
         const birthdayContent = document.getElementById("birthdayContent");
         const bg = document.getElementById('bg');
         
+        // Music player elements
+        const audioPlayer = document.getElementById('birthdayAudio');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volumeSlider');
+        
+        // Playlist with royalty-free romantic music
+        const playlist = [
+            {
+                title: "Romantic Moment",
+                src: "https://assets.mixkit.co/music/preview/mixkit-romantic-moment-488.mp3"
+            },
+            {
+                title: "Sweet Love",
+                src: "https://assets.mixkit.co/music/preview/mixkit-sweet-love-488.mp3"
+            },
+            {
+                title: "Birthday Romance",
+                src: "https://assets.mixkit.co/music/preview/mixkit-birthday-romance-489.mp3"
+            }
+        ];
+        
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        
+        // Initialize music player
+        function initMusicPlayer() {
+            // Load the first song
+            loadSong(currentSongIndex);
+            
+            // Event listeners for music controls
+            playBtn.addEventListener('click', playSong);
+            pauseBtn.addEventListener('click', pauseSong);
+            prevBtn.addEventListener('click', prevSong);
+            nextBtn.addEventListener('click', nextSong);
+            volumeSlider.addEventListener('input', setVolume);
+            progressContainer.addEventListener('click', setProgress);
+            
+            // Update progress as song plays
+            audioPlayer.addEventListener('timeupdate', updateProgress);
+            audioPlayer.addEventListener('loadedmetadata', updateDuration);
+            audioPlayer.addEventListener('ended', nextSong);
+        }
+        
+        function loadSong(index) {
+            const song = playlist[index];
+            audioPlayer.src = song.src;
+            document.querySelector('.song-info').textContent = `🎵 Now Playing: "${song.title}" - Your Special Song`;
+            
+            // Reset progress
+            progressBar.style.width = '0%';
+            currentTimeEl.textContent = '0:00';
+        }
+        
+        function playSong() {
+            isPlaying = true;
+            audioPlayer.play();
+            playBtn.style.display = 'none';
+            pauseBtn.style.display = 'flex';
+            createHearts(5); // Add some hearts when music starts
+        }
+        
+        function pauseSong() {
+            isPlaying = false;
+            audioPlayer.pause();
+            playBtn.style.display = 'flex';
+            pauseBtn.style.display = 'none';
+        }
+        
+        function prevSong() {
+            currentSongIndex--;
+            if (currentSongIndex < 0) {
+                currentSongIndex = playlist.length - 1;
+            }
+            loadSong(currentSongIndex);
+            if (isPlaying) {
+                audioPlayer.play();
+            }
+        }
+        
+        function nextSong() {
+            currentSongIndex++;
+            if (currentSongIndex >= playlist.length) {
+                currentSongIndex = 0;
+            }
+            loadSong(currentSongIndex);
+            if (isPlaying) {
+                audioPlayer.play();
+            }
+        }
+        
+        function setVolume() {
+            audioPlayer.volume = volumeSlider.value / 100;
+        }
+        
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audioPlayer.duration;
+            
+            audioPlayer.currentTime = (clickX / width) * duration;
+        }
+        
+        function updateProgress() {
+            const { currentTime, duration } = audioPlayer;
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            
+            // Format time display
+            currentTimeEl.textContent = formatTime(currentTime);
+        }
+        
+        function updateDuration() {
+            durationEl.textContent = formatTime(audioPlayer.duration);
+        }
+        
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
         // Calculate next birthday
         function getNextBirthday(month, day) {
             const now = new Date();
@@ -524,7 +751,6 @@
             let birthday = new Date(year, month - 1, day, 0, 0, 0);
 
             // For testing - set to 10 seconds in the future
-            // Remove this in production
             if (window.location.search.includes('test')) {
                 birthday = new Date(now.getTime() + 10000);
             }
@@ -575,8 +801,10 @@
                 createConfetti(150);
                 createHearts(50);
                 
-                // Play celebration sound (simulated)
-                alert("🎉 Happy Birthday! 🎉\n\nThis is your special day! I hope it's as amazing as you are!");
+                // Auto-play birthday music
+                setTimeout(() => {
+                    playSong();
+                }, 1000);
             }, 1000);
         }
         
@@ -692,20 +920,14 @@
             createHearts(30);
         });
         
-        // Music player functionality
-        document.getElementById('playBtn').addEventListener('click', function() {
-            alert("🎵 Playing 'Perfect' by Ed Sheeran... 🎵\n\nI found a love for me\nDarling, just dive right in and follow my lead\nWell, I found a girl, beautiful and sweet\nOh, I never knew you were the someone waiting for me");
-        });
-        
-        document.getElementById('pauseBtn').addEventListener('click', function() {
-            alert("Music paused");
-        });
-        
         // Initialize page
         window.addEventListener('load', function() {
             // Create floating elements
             for (let i = 0; i < 20; i++) createFloating('balloon');
             for (let i = 0; i < 24; i++) createFloating('heart');
+            
+            // Initialize music player
+            initMusicPlayer();
             
             // Start countdown
             updateCountdown();
